@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بيئة تنمية مهارات التحول الرقمي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Cairo', sans-serif; background-color: #f4f7fa; overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* ================= الشريط العلوي ================= */
+        .top-header { background-color: #ffffff; color: #1a2b4c; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: relative; z-index: 1002; }
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .menu-btn { font-size: 24px; cursor: pointer; transition: 0.2s; color: #1a2b4c; }
+        .menu-btn:hover { color: #5b8ee5; }
+        .brand-title { font-weight: 900; font-size: 22px; }
+        .brand-title span { background: #eef2f5; color: #5b8ee5; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; }
+        .logout-btn { background-color: #e74c3c; color: white; border: none; padding: 8px 20px; border-radius: 6px; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .logout-btn:hover { background-color: #c0392b; }
+
+        /* ================= شريط القوائم الأساسي ================= */
+        .main-nav { background-color: #1a2b4c; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 0 20px; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: center; }
+        .nav-list { list-style: none; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; padding: 5px 0; }
+        .nav-list > li { position: relative; }
+        .nav-list > li > a { display: flex; align-items: center; gap: 8px; padding: 14px 18px; color: white; text-decoration: none; font-weight: 700; font-size: 15px; cursor: pointer; border-radius: 8px; transition: 0.3s; }
+        .nav-list > li > a i { color: #5b8ee5; font-size: 16px; }
+        .nav-list > li > a:hover, .nav-list > li > a.active { background-color: #2980b9; }
+        .nav-list > li > a:hover i, .nav-list > li > a.active i { color: white; }
+
+        .dropdown { position: absolute; top: 100%; right: 0; background-color: white; min-width: 230px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-radius: 8px; border-top: 4px solid #5b8ee5; display: none; flex-direction: column; overflow: hidden; z-index: 1001; margin-top: 5px; }
+        .has-dropdown:hover .dropdown { display: flex; }
+        .dropdown a { padding: 12px 20px; color: #1a2b4c; text-decoration: none; font-size: 14px; font-weight: 700; border-bottom: 1px solid #f1f1f1; transition: 0.2s; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .dropdown a i { color: #5b8ee5; }
+        .dropdown a:hover { background-color: #f4f7fa; color: #5b8ee5; padding-right: 25px; }
+
+        /* ================= القوائم الجانبية ================= */
+        .sidebar { position: fixed; top: 0; right: -320px; width: 300px; height: 100vh; background: #1a2b4c; box-shadow: -5px 0 25px rgba(0,0,0,0.2); transition: 0.3s; z-index: 1005; padding-top: 20px; display: flex; flex-direction: column; color: white; }
+        .sidebar.active { right: 0; }
+        .sidebar-header { padding: 20px 25px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; background-color: #121e36; }
+        .sidebar-header h3 { color: white; font-size: 18px; font-weight: 900; }
+        .close-sidebar { font-size: 22px; color: rgba(255,255,255,0.6); cursor: pointer; transition: 0.2s; }
+        .close-sidebar:hover { color: #e74c3c; transform: rotate(90deg); }
+        .sidebar ul { list-style: none; padding: 0; margin-top: 15px; }
+        .sidebar ul li a { display: flex; align-items: center; gap: 12px; padding: 15px 25px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 15px; font-weight: 700; transition: 0.3s; border-right: 4px solid transparent; cursor: pointer; }
+        .sidebar ul li a i { font-size: 18px; width: 25px; text-align: center; color: #5b8ee5; }
+        .sidebar ul li a:hover { background-color: rgba(91, 142, 229, 0.15); color: white; border-right: 4px solid #5b8ee5; padding-right: 35px; }
+        
+        /* قائمة الموديول الجانبية */
+        .module-sidebar { position: fixed; top: 0; right: -380px; width: 350px; height: 100vh; background: white; box-shadow: -5px 0 25px rgba(0,0,0,0.15); transition: 0.3s; z-index: 1006; display: flex; flex-direction: column; }
+        .module-sidebar.active { right: 0; }
+        .module-sidebar .sidebar-header { background-color: #f8faff; border-bottom: 1px solid #eee; }
+        .module-sidebar .sidebar-header h3 { color: #1a2b4c; }
+        .module-sidebar .close-sidebar { color: #95a5a6; }
+        .module-actions { padding: 20px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+        .mod-btn { background: #1a2b4c; border: 2px solid #1a2b4c; color: white; padding: 16px; border-radius: 10px; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 15px; text-align: right; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 12px; }
+        .mod-btn i { color: #5b8ee5; font-size: 18px; width: 25px; text-align: center; }
+        .mod-btn:hover { background: #2980b9; border-color: #2980b9; transform: translateX(-5px); }
+        .mod-btn:hover i { color: white; }
+        
+        .mod-btn.locked { background: #f4f7fa; border-color: #eef2f5; color: #95a5a6; opacity: 0.7; pointer-events: none; }
+        .mod-btn.locked i { color: #95a5a6; }
+        .mod-btn.unlocked { background: #1a2b4c; color: white; }
+        .mod-btn.completed { background: #2ecc71; border-color: #2ecc71; }
+        .mod-btn.completed i { color: white; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1004; display: none; backdrop-filter: blur(2px); }
+        .overlay.active { display: block; }
+
+        /* ================= نافذة الداش بورد (Modal) ================= */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 2000; display: none; justify-content: center; align-items: center; }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
+        .modal-content { background: white; width: 90%; max-width: 900px; padding: 40px; border-radius: 16px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #7f8c8d; transition: 0.2s; }
+        .close-modal:hover { color: #e74c3c; transform: rotate(90deg); }
+        
+        .result-title { text-align: center; color: #1a2b4c; font-size: 28px; font-weight: 900; margin-bottom: 40px; }
+        .dashboard-layout { display: flex; gap: 40px; flex-wrap: wrap; }
+        .stats-container { flex: 1; min-width: 300px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #eee; }
+        .stat-card h4 { font-size: 14px; margin-bottom: 10px; color: #7f8c8d; }
+        .stat-card .value { font-size: 28px; font-weight: 900; }
+        .stat-card.correct .value { color: #2ecc71; }
+        .stat-card.wrong .value { color: #e74c3c; }
+        .stat-card.perc .value { color: #2980b9; }
+
+        .chart-container { flex: 1; min-width: 300px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #eee; display: flex; align-items: flex-end; justify-content: center; gap: 40px; height: 250px; position: relative; padding-bottom: 40px; }
+        .chart-container::before { content: ""; position: absolute; top: 20px; left: 20px; right: 20px; bottom: 40px; background-image: linear-gradient(to bottom, #f0f0f0 1px, transparent 1px); background-size: 100% 20%; z-index: 0; }
+        .bar-wrapper { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; width: 60px; }
+        .bar { width: 100%; border-radius: 5px 5px 0 0; transition: height 1s cubic-bezier(0.4, 0, 0.2, 1); height: 0; display: flex; justify-content: center; align-items: flex-start; padding-top: 10px; color: white; font-weight: bold; }
+        .bar.green { background: linear-gradient(to top, #27ae60, #2ecc71); }
+        .bar.red { background: linear-gradient(to top, #c0392b, #e74c3c); }
+        .bar-label { position: absolute; bottom: -30px; font-weight: 700; color: #34495e; font-size: 14px; }
+
+        /* ================= منطقة المحتوى ================= */
+        .main-content { flex: 1; padding: 40px 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .cover-view { text-align: center; animation: fadeIn 0.5s; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+        .cover-view img { max-width: 100%; max-height: calc(100vh - 180px); object-fit: contain; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+
+        .modules-grid { display: none; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-top: 20px; animation: fadeIn 0.5s; }
+        .module-card { background: white; border-radius: 16px; padding: 40px 25px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.05); cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; border: 1px solid #eef2f5; }
+        .module-card::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 5px; background: #5b8ee5; transform: scaleX(0); transition: 0.3s; transform-origin: left; }
+        .module-card:hover { transform: translateY(-8px); border-color: #d1e0fc; }
+        .module-card:hover::after { transform: scaleX(1); }
+        .module-card.locked { opacity: 0.6; filter: grayscale(100%); cursor: not-allowed; pointer-events: none; }
+        .module-card.locked::after { display: none; }
+
+        .unified-icon { width: 80px; height: 80px; background-color: #f4f7fa; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; color: #5b8ee5; margin-bottom: 20px; transition: 0.3s; }
+        .module-card:hover .unified-icon { background-color: #5b8ee5; color: white; transform: scale(1.1); }
+        .module-card.locked .unified-icon { color: #95a5a6; background-color: #eef2f5; }
+
+        .module-info h3 { color: #1a2b4c; font-size: 24px; font-weight: 900; margin-bottom: 10px; line-height: 1.3; }
+        .module-info p { color: #7f8c8d; font-size: 15px; font-weight: 600; line-height: 1.6; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .footer { text-align: center; padding: 25px; background-color: #1a2b4c; color: white; font-size: 14px; font-weight: 700; margin-top: auto; }
+    </style>
+</head>
+<body>
+
+    <script>
+        // البوابات الأمنية للهوم
+        let currentUser = localStorage.getItem("currentUser");
+        if (!currentUser) { 
+            window.location.href = "index.html"; 
+        } else if (localStorage.getItem(currentUser + "_preTestDone") !== "true") { 
+            window.location.href = "pretest.html"; 
+        } else if (localStorage.getItem(currentUser + "_surveyDone") !== "true") { 
+            window.location.href = "survey.html"; 
+        }
+    </script>
+
+    <div class="top-header">
+        <div class="header-right">
+            <div class="menu-btn" onclick="toggleSidebar('userSidebar')"><i class="fa-solid fa-bars"></i></div>
+            <div class="brand-title">بيئة تنمية مهارات التحول الرقمي <span>Beta</span></div>
+        </div>
+        <button class="logout-btn" onclick="logout()">تسجيل خروج <i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+    </div>
+
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li><a onclick="showView('cover')" class="active" id="nav-home"><i class="fa-solid fa-house"></i> الرئيسية</a></li>
+            <li><a href="guide.html"><i class="fa-solid fa-book"></i> دليل الطالب</a></li>
+            <li><a href="objectives.html"><i class="fa-solid fa-bullseye"></i> الأهداف العامة</a></li>
+            
+            <li class="has-dropdown">
+                <a><i class="fa-solid fa-file-pen"></i> أدوات القياس القبلي ▼</a>
+                <div class="dropdown">
+                    <a onclick="showDashboardModal()"><i class="fa-solid fa-square-check"></i> الاختبار التحصيلي القبلي</a>
+                    <a onclick="alert('تم حفظ إجاباتك في مقياس التقبل التكنولوجي مسبقاً.')"><i class="fa-solid fa-list-check"></i> مقياس التقبل التكنولوجي</a>
+                </div>
+            </li>
+            
+            <li><a onclick="showView('modules')" id="nav-modules"><i class="fa-solid fa-laptop-file"></i> المحتوى التعليمي</a></li>
+            
+            <li class="has-dropdown">
+                <a><i class="fa-solid fa-chart-simple"></i> أدوات القياس البعدي ▼</a>
+                <div class="dropdown">
+                    <a onclick="alert('مغلق حالياً.. يجب إتمام دراسة الموديولات أولاً.')"><i class="fa-solid fa-lock"></i> الاختبار التحصيلي البعدي</a>
+                    <a onclick="alert('مغلق حالياً.. يجب إتمام دراسة الموديولات أولاً.')"><i class="fa-solid fa-lock"></i> مقياس التقبل التكنولوجي</a>
+                </div>
+            </li>
+            
+            <li><a href="contact.html"><i class="fa-solid fa-headset"></i> تواصل معنا</a></li>
+        </ul>
+    </nav>
+
+    <div class="modal-overlay" id="dashboardModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeDashboardModal()"><i class="fa-solid fa-xmark"></i></span>
+            <h2 class="result-title">تقرير نتيجة الاختبار التحصيلي القبلي</h2>
+            <div class="dashboard-layout">
+                <div class="stats-container">
+                    <div class="stat-card correct"><h4>الإجابات الصحيحة</h4><div class="value" id="dashCorrect">0</div></div>
+                    <div class="stat-card wrong"><h4>الإجابات الخاطئة</h4><div class="value" id="dashWrong">0</div></div>
+                    <div class="stat-card perc" style="grid-column: span 2;"><h4>النسبة المئوية</h4><div class="value" id="dashPerc">0%</div></div>
+                </div>
+                <div class="chart-container">
+                    <div class="bar-wrapper"><div class="bar green" id="dashBarCorrect"></div><div class="bar-label">صحيحة</div></div>
+                    <div class="bar-wrapper"><div class="bar red" id="dashBarWrong"></div><div class="bar-label">خاطئة</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closeAllSidebars()"></div>
+
+    <div class="sidebar" id="userSidebar">
+        <div class="sidebar-header">
+            <div>
+                <h3>مرحباً، <span id="studentName"></span></h3>
+                <p style="color:#aab7b8; font-size:12px; margin-top:5px; font-weight:700;">طالب بكلية التربية</p>
+            </div>
+            <div class="close-sidebar" onclick="closeAllSidebars()"><i class="fa-solid fa-xmark"></i></div>
+        </div>
+        <ul>
+            <li><a href="dashboard.html"><i class="fa-solid fa-user-graduate"></i> لوحة الطالب</a></li>
+            <li><a href="about.html"><i class="fa-solid fa-circle-info"></i> عن البيئة</a></li>
+            <li><a onclick="alert('هذه الصفحة قيد الإنشاء حالياً ⏳'); closeAllSidebars();"><i class="fa-solid fa-link"></i> روابط تهمك</a></li>
+            <li><a href="support.html"><i class="fa-regular fa-comments"></i> الدعم والمساعدة</a></li>
+            <li><a href="contact.html"><i class="fa-solid fa-headset"></i> تواصل معنا</a></li>
+        </ul>
+    </div>
+
+    <div class="module-sidebar" id="moduleSidebar">
+        <div class="sidebar-header">
+            <h3 id="moduleTitleDisplay" style="font-size: 16px;">الموديول الأول</h3>
+            <div class="close-sidebar" onclick="closeAllSidebars()"><i class="fa-solid fa-xmark"></i></div>
+        </div>
+        <div class="module-actions" id="moduleStepsContainer"></div>
+    </div>
+
+    <div class="main-content">
+        <div id="coverView" class="cover-view">
+            <img src="cover.jpg" alt="غلاف الرسالة">
+        </div>
+
+        <div id="modulesView" class="modules-grid">
+            <div class="module-card" id="modCard1">
+                <div class="unified-icon" id="modIcon1"><i class="fa-solid fa-lock"></i></div>
+                <div class="module-info"><h3>الموديول الأول</h3><p>مهارات تصميم المحتوى تطبيقًا على برنامج كانفا Canva</p></div>
+            </div>
+            <div class="module-card" id="modCard2">
+                <div class="unified-icon" id="modIcon2"><i class="fa-solid fa-lock"></i></div>
+                <div class="module-info"><h3>الموديول الثاني</h3><p>مهارات إدارة عناصر المحتوى التعليمي الرقمي</p></div>
+            </div>
+            <div class="module-card" id="modCard3">
+                <div class="unified-icon" id="modIcon3"><i class="fa-solid fa-lock"></i></div>
+                <div class="module-info"><h3>الموديول الثالث</h3><p>وسائل التقييم الالكتروني تطبيقًا على Google Forms</p></div>
+            </div>
+            <div class="module-card" id="modCard4">
+                <div class="unified-icon" id="modIcon4"><i class="fa-solid fa-lock"></i></div>
+                <div class="module-info"><h3>الموديول الرابع</h3><p>إدارة مستودعات التعلم الرقمية تطبيقًا على Google Drive</p></div>
+            </div>
+            <div class="module-card" id="modCard5">
+                <div class="unified-icon" id="modIcon5"><i class="fa-solid fa-lock"></i></div>
+                <div class="module-info"><h3>الموديول الخامس</h3><p>إدارة الاجتماعات الافتراضية تطبيقًا على Meet Google</p></div>
+            </div>
+            <div class="module-card" id="modCard6">
+                <div class="unified-icon" id="modIcon6"><i class="fa-solid fa-lock"></i></div>
+                <div class="module-info"><h3>الموديول السادس</h3><p>استخدام أدوات الذكاء الاصطناعي تطبيقًا على ChatGPT</p></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">جميع الحقوق محفوظة للباحث © 2026</div>
+
+    <script>
+        document.getElementById("studentName").innerText = currentUser;
+
+        function showDashboardModal() {
+            let correct = localStorage.getItem(currentUser + "_preTestCorrect") || 0;
+            let wrong = localStorage.getItem(currentUser + "_preTestWrong") || 0;
+            let perc = localStorage.getItem(currentUser + "_preTestScore") || 0;
+            document.getElementById("dashCorrect").innerText = correct;
+            document.getElementById("dashWrong").innerText = wrong;
+            document.getElementById("dashPerc").innerText = perc + "%";
+            document.getElementById("dashboardModal").classList.add("active");
+            setTimeout(() => {
+                document.getElementById("dashBarCorrect").style.height = perc + "%";
+                document.getElementById("dashBarCorrect").innerText = perc + "%";
+                document.getElementById("dashBarWrong").style.height = (100 - perc) + "%";
+                document.getElementById("dashBarWrong").innerText = (100 - perc) + "%";
+            }, 300);
+        }
+
+        function closeDashboardModal() {
+            document.getElementById("dashboardModal").classList.remove("active");
+            document.getElementById("dashBarCorrect").style.height = "0%";
+            document.getElementById("dashBarWrong").style.height = "0%";
+        }
+
+        // الدالة الديناميكية لفتح الموديولات أوتوماتيك وتحديث الأيقونات
+        function updateModulesUI() {
+            let unlockedModule = parseInt(localStorage.getItem(currentUser + "_unlockedModule")) || 1;
+            const moduleIcons = ["fa-palette", "fa-chalkboard-user", "fa-list-check", "fa-hard-drive", "fa-video", "fa-robot"];
+
+            for (let i = 1; i <= 6; i++) {
+                let card = document.getElementById("modCard" + i);
+                let iconContainer = document.getElementById("modIcon" + i);
+
+                if (i <= unlockedModule) {
+                    card.classList.remove("locked");
+                    iconContainer.innerHTML = `<i class="fa-solid ${moduleIcons[i-1]}"></i>`;
+                    
+                    // التعديل هنا: أي موديول مفتوح هيتم توجيهه يفتح الـ Sidebar الخاص بيه
+                    card.setAttribute("onclick", `openModuleMenu(${i})`);
+                } else {
+                    card.classList.add("locked");
+                    iconContainer.innerHTML = `<i class="fa-solid fa-lock"></i>`;
+                    card.removeAttribute("onclick");
+                }
+            }
+        }
+
+        // إعدادات أرقام الخطوات لكل موديول
+        const moduleConfig = {
+            1: { name: "الموديول الأول", postTaskStep: 24, postTestStep: 25 },
+            2: { name: "الموديول الثاني", postTaskStep: 21, postTestStep: 22 },
+            3: { name: "الموديول الثالث", postTaskStep: 20, postTestStep: 21 }, // أرقام مؤقتة
+            4: { name: "الموديول الرابع", postTaskStep: 20, postTestStep: 21 },
+            5: { name: "الموديول الخامس", postTaskStep: 20, postTestStep: 21 },
+            6: { name: "الموديول السادس", postTaskStep: 20, postTestStep: 21 }
+        };
+
+        function openModuleMenu(modNum) {
+            let highestStep = parseInt(localStorage.getItem(currentUser + "_mod" + modNum + "_highestStep")) || 1;
+            let container = document.getElementById("moduleStepsContainer");
+            
+            // تغيير اسم الموديول في القائمة الجانبية من فوق
+            document.getElementById("moduleTitleDisplay").innerText = moduleConfig[modNum].name;
+            container.innerHTML = ""; 
+
+            let menuLinks = [
+                { id: 1, name: "مبررات دراسة الموديول", icon: "fa-lightbulb", reqStep: 1, targetStep: 1 },
+                { id: 2, name: "أهداف دراسة الموديول", icon: "fa-bullseye", reqStep: 2, targetStep: 2 },
+                { id: 3, name: "المهمة الأدائية القبلية", icon: "fa-puzzle-piece", reqStep: 3, targetStep: 3 },
+                { id: 4, name: "الاختبار القبلي", icon: "fa-file-signature", reqStep: 4, targetStep: 4 },
+                { id: 5, name: "المحتوى التعليمي", icon: "fa-book-open", reqStep: 6, targetStep: 6 },
+                { id: 6, name: "المهمة الأدائية البعدية", icon: "fa-toolbox", reqStep: moduleConfig[modNum].postTaskStep, targetStep: moduleConfig[modNum].postTaskStep },
+                { id: 7, name: "الاختبار البعدي", icon: "fa-award", reqStep: moduleConfig[modNum].postTestStep, targetStep: moduleConfig[modNum].postTestStep }
+            ];
+
+            menuLinks.forEach((item, index) => {
+                let btn = document.createElement("button");
+                if (highestStep >= item.reqStep) {
+                    let isCurrentStep = false;
+                    if (index === menuLinks.length - 1 && highestStep >= item.reqStep) {
+                        isCurrentStep = true;
+                    } else if (highestStep >= item.reqStep && highestStep < (menuLinks[index+1] ? menuLinks[index+1].reqStep : 999)) {
+                        isCurrentStep = true;
+                    }
+                    if (isCurrentStep) {
+                        btn.className = "mod-btn unlocked";
+                        btn.innerHTML = `<i class="fa-solid ${item.icon}"></i> ${item.name}`;
+                        // توجيه لصفحة الموديول الصحيحة
+                        btn.onclick = () => window.location.href = `module${modNum}.html?step=${highestStep}`;
+                    } else {
+                        btn.className = "mod-btn completed";
+                        btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${item.name}`;
+                        // توجيه لصفحة الموديول الصحيحة
+                        btn.onclick = () => window.location.href = `module${modNum}.html?step=${item.targetStep}`;
+                    }
+                } else {
+                    btn.className = "mod-btn locked";
+                    btn.innerHTML = `<i class="fa-solid fa-lock"></i> ${item.name}`;
+                }
+                container.appendChild(btn);
+            });
+            toggleSidebar('moduleSidebar');
+        }
+
+        updateModulesUI();
+
+        function toggleSidebar(id) { closeAllSidebars(); document.getElementById(id).classList.add("active"); document.getElementById("overlay").classList.add("active"); }
+        function closeAllSidebars() { document.getElementById("userSidebar").classList.remove("active"); document.getElementById("moduleSidebar").classList.remove("active"); document.getElementById("overlay").classList.remove("active"); }
+        function hideAllViews() { document.getElementById("coverView").style.display = "none"; document.getElementById("modulesView").style.display = "none"; document.getElementById("nav-home").classList.remove("active"); document.getElementById("nav-modules").classList.remove("active"); }
+        function showView(view) { hideAllViews(); if (view === 'cover') { document.getElementById("coverView").style.display = "flex"; document.getElementById("nav-home").classList.add("active"); } else if (view === 'modules') { document.getElementById("modulesView").style.display = "grid"; document.getElementById("nav-modules").classList.add("active"); } }
+        function logout() { if(confirm("هل تريد بالتأكيد تسجيل الخروج؟")) { localStorage.removeItem("currentUser"); window.location.href = "index.html"; } }
+    </script>
+</body>
+</html>
+

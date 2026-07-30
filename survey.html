@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>مقياس التقبل التكنولوجي</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background-color: #f4f7f6; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-top: 5px solid #17a2b8; }
+        h2 { color: #17a2b8; text-align: center; }
+        .instructions { background: #e2e3e5; padding: 15px; border-radius: 5px; margin-bottom: 20px; font-size: 15px; line-height: 1.6; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        th { background-color: #17a2b8; color: white; }
+        td.text-right { text-align: right; }
+        button { display: block; width: 100%; padding: 15px; background: #17a2b8; color: white; border: none; font-size: 18px; border-radius: 5px; cursor: pointer; margin-top: 30px; transition: 0.3s; }
+        button:hover { background: #138496; }
+    </style>
+</head>
+<body>
+
+    <script>
+        // توجيه أمني لصفحة الاستبيان
+        let currentUser = localStorage.getItem("currentUser");
+        if (!currentUser) window.location.href = "index.html";
+        else if (localStorage.getItem(currentUser + "_preTestDone") !== "true") window.location.href = "pretest.html"; 
+        else if (localStorage.getItem(currentUser + "_surveyDone") === "true") window.location.href = "home.html";
+    </script>
+
+    <div class="container">
+        <h2>مقياس التقبل التكنولوجي</h2>
+        <div class="instructions">
+            <strong>عزيزي الطالب،،،</strong><br>
+            يرجى قراءة كل عبارة بعناية واختيار البديل المناسب (دائمًا – أحيانًا – نادرًا). علمًا بأن هذا المقياس ليس اختبارًا، وليس هناك استجابة صواب وأخرى خطأ، وهو لخدمة البحث العلمي فحسب.
+        </div>
+
+        <form id="surveyForm">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="5%">م</th>
+                        <th width="65%">عبارات المقياس</th>
+                        <th width="10%">دائمًا</th>
+                        <th width="10%">أحيانًا</th>
+                        <th width="10%">نادرًا</th>
+                    </tr>
+                </thead>
+                <tbody id="surveyTableBody">
+                    </tbody>
+            </table>
+            <button type="button" onclick="submitSurvey()">إرسال الاستجابات والانتقال للمنصة</button>
+        </form>
+    </div>
+
+    <script>
+        // تعريف العبارات وتحديد إذا كانت إيجابية أو عكسية (سلبية)
+        const surveyStatements = [
+            { text: "أستطيع التعامل مع واجهة Google Classroom دون الحاجة إلى مهارات متقدمة.", reverse: false },
+            { text: "أستطيع إعداد استبانات واختبارات إلكترونية عبر Google Form بخطوات بسيطة.", reverse: false },
+            { text: "أتحكم في تنظيم الملفات داخل Google Drive بطريقة واضحة وسهلة.", reverse: false },
+            { text: "أستخدم Google Meet لعقد الاجتماعات الافتراضية بسهولة.", reverse: false },
+            { text: "أجد صعوبة وتعقيداً في استخدام منصة Google Classroom لإدارة المهام والواجبات.", reverse: true }
+        ];
+
+        const tbody = document.getElementById('surveyTableBody');
+        
+        surveyStatements.forEach((item, index) => {
+            let row = `<tr>
+                <td>${index + 1}</td>
+                <td class="text-right">${item.text}</td>
+                <td><input type="radio" name="s${index}" value="دائما" required></td>
+                <td><input type="radio" name="s${index}" value="أحيانا"></td>
+                <td><input type="radio" name="s${index}" value="نادرا"></td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+
+        function submitSurvey() {
+            let allAnswered = true;
+            let surveyData = {};
+            let totalScore = 0;
+            
+            for(let i = 0; i < surveyStatements.length; i++) {
+                let selected = document.querySelector(`input[name="s${i}"]:checked`);
+                if(!selected) {
+                    allAnswered = false;
+                    break;
+                }
+                
+                let answerValue = selected.value;
+                surveyData[`s${i}`] = answerValue;
+                
+                // حساب الدرجات بناءً على نوع العبارة
+                let itemScore = 0;
+                if (!surveyStatements[i].reverse) {
+                    // عبارة إيجابية
+                    if (answerValue === "دائما") itemScore = 3;
+                    else if (answerValue === "أحيانا") itemScore = 2;
+                    else if (answerValue === "نادرا") itemScore = 1;
+                } else {
+                    // عبارة عكسية (سلبية)
+                    if (answerValue === "دائما") itemScore = 1;
+                    else if (answerValue === "أحيانا") itemScore = 2;
+                    else if (answerValue === "نادرا") itemScore = 3;
+                }
+                
+                totalScore += itemScore;
+            }
+
+            if(!allAnswered) {
+                alert("يرجى الإجابة على جميع العبارات قبل الإرسال.");
+                return;
+            }
+
+            // حفظ الإجابات والدرجة وتوجيه الطالب للمنصة الرئيسية
+            localStorage.setItem(currentUser + "_surveyAnswers", JSON.stringify(surveyData));
+            localStorage.setItem(currentUser + "_surveyScore", totalScore);
+            localStorage.setItem(currentUser + "_surveyDone", "true");
+            
+            // إظهار رسالة للباحث/الطالب للتأكيد
+            alert("شكراً لك! تمت إضافة استجاباتك بنجاح.\nجاري توجيهك الآن للصفحة الرئيسية للمنصة...");
+            window.location.href = "home.html";
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مقياس التقبل التكنولوجي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Cairo', sans-serif; background-color: #f4f7f6; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        .top-header { width: 100%; max-width: 900px; background-color: #17a2b8; color: white; padding: 15px 25px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .brand-title { font-weight: 900; font-size: 20px; }
+        .student-badge { background: #138496; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+
+        .container { width: 100%; max-width: 900px; margin: auto; background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; overflow: hidden; }
+        
+        /* نظام التبديل بين الشاشات */
+        .view-section { display: none; animation: fadeIn 0.4s ease; }
+        .view-section.active { display: block; }
+
+        /* شاشة الاستبيان */
+        h2 { color: #17a2b8; text-align: center; font-size: 28px; margin-bottom: 20px; font-weight: 900; }
+        .instructions { background: #e2e3e5; padding: 15px 20px; border-radius: 8px; margin-bottom: 30px; font-size: 16px; line-height: 1.8; color: #444; font-weight: 600; border-right: 4px solid #17a2b8; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #eef2f5; padding: 15px; text-align: center; font-size: 16px; }
+        th { background-color: #17a2b8; color: white; font-weight: 800; }
+        td.text-right { text-align: right; font-weight: 700; color: #1a2b4c; }
+        
+        input[type="radio"] { transform: scale(1.3); cursor: pointer; accent-color: #17a2b8; }
+
+        .submit-btn { display: block; width: 100%; padding: 18px; background: #17a2b8; color: white; border: none; font-size: 18px; font-weight: 800; border-radius: 8px; cursor: pointer; margin-top: 30px; transition: 0.3s; font-family: 'Cairo', sans-serif; }
+        .submit-btn:hover { background: #138496; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(23, 162, 184, 0.3); }
+
+        /* شاشة الداش بورد (النتيجة) */
+        .result-title { text-align: center; color: #1a2b4c; font-size: 28px; font-weight: 900; margin-bottom: 40px; }
+        .dashboard-layout { display: flex; gap: 40px; flex-wrap: wrap; }
+        
+        .stats-container { flex: 1; min-width: 300px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #eee; }
+        .stat-card h4 { font-size: 14px; margin-bottom: 10px; color: #7f8c8d; font-weight: 700; }
+        .stat-card .value { font-size: 28px; font-weight: 900; }
+        .stat-card.correct .value { color: #2ecc71; }
+        .stat-card.wrong .value { color: #7f8c8d; }
+        .stat-card.perc .value { color: #17a2b8; }
+        .stat-card.time .value { color: #f39c12; font-size: 24px; }
+
+        .chart-container { flex: 1; min-width: 300px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #eee; display: flex; align-items: flex-end; justify-content: center; gap: 40px; height: 250px; position: relative; padding-bottom: 40px; }
+        .chart-container::before { content: ""; position: absolute; top: 20px; left: 20px; right: 20px; bottom: 40px; background-image: linear-gradient(to bottom, #f0f0f0 1px, transparent 1px); background-size: 100% 20%; z-index: 0; }
+        .bar-wrapper { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; width: 70px; }
+        .bar { width: 100%; border-radius: 5px 5px 0 0; transition: height 1s cubic-bezier(0.4, 0, 0.2, 1); height: 0; display: flex; justify-content: center; align-items: flex-start; padding-top: 10px; color: white; font-weight: bold; }
+        .bar.green { background: linear-gradient(to top, #17a2b8, #138496); }
+        .bar.red { background: linear-gradient(to top, #bdc3c7, #95a5a6); }
+        .bar-label { position: absolute; bottom: -30px; font-weight: 700; color: #34495e; font-size: 14px; white-space: nowrap; }
+
+        .finish-action { margin-top: 40px; text-align: center; }
+        .go-home-btn { background: #1a2b4c; color: white; border: none; padding: 15px 40px; font-size: 18px; font-weight: 800; border-radius: 8px; cursor: pointer; transition: 0.3s; font-family: 'Cairo', sans-serif; display: inline-flex; align-items: center; gap: 10px; }
+        .go-home-btn:hover { background: #2980b9; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(41, 128, 185, 0.3); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 600px) { .container { padding: 25px; } .dashboard-layout { flex-direction: column; } th, td { padding: 10px; font-size: 14px; } }
+    </style>
+</head>
+<body>
+
+    <script>
+        // توجيه أمني لصفحة الاستبيان
+        let currentUser = localStorage.getItem("currentUser");
+        if (!currentUser) window.location.href = "index.html";
+        else if (localStorage.getItem(currentUser + "_preTestDone") !== "true") window.location.href = "pretest.html"; 
+        else if (localStorage.getItem(currentUser + "_surveyDone") === "true") window.location.href = "home.html";
+    </script>
+
+    <div class="top-header">
+        <div class="brand-title">البيئة الذكية للتحول الرقمي</div>
+        <div class="student-badge">طالب: <span id="studentIdDisplay"></span></div>
+    </div>
+
+    <div class="container">
+        
+        <div id="view-survey" class="view-section active">
+            <h2>مقياس التقبل التكنولوجي</h2>
+            <div class="instructions">
+                <strong>عزيزي الطالب،،،</strong><br>
+                يرجى قراءة كل عبارة بعناية واختيار البديل المناسب (دائمًا – أحيانًا – نادرًا). علمًا بأن هذا المقياس ليس اختبارًا، وليس هناك استجابة صواب وأخرى خطأ، وهو لخدمة البحث العلمي فحسب.
+            </div>
+
+            <form id="surveyForm">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="5%">م</th>
+                            <th width="65%">عبارات المقياس</th>
+                            <th width="10%">دائمًا</th>
+                            <th width="10%">أحيانًا</th>
+                            <th width="10%">نادرًا</th>
+                        </tr>
+                    </thead>
+                    <tbody id="surveyTableBody">
+                        </tbody>
+                </table>
+                <button type="button" class="submit-btn" onclick="submitSurvey()">إرسال الاستجابات والتأكيد ➔</button>
+            </form>
+        </div>
+
+        <div id="view-result" class="view-section">
+            <h2 class="result-title">تقرير إتمام المقياس</h2>
+            <div class="dashboard-layout">
+                <div class="stats-container">
+                    <div class="stat-card correct"><h4>الدرجة التي حصلت عليها</h4><div class="value" id="resScore">0</div></div>
+                    <div class="stat-card wrong"><h4>أقصى درجة للمقياس</h4><div class="value" id="resMaxScore">0</div></div>
+                    <div class="stat-card perc" style="grid-column: span 2;"><h4>نسبة التقبل التكنولوجي</h4><div class="value" id="resPerc">0%</div></div>
+                    <div class="stat-card time" style="grid-column: span 2;"><h4>الزمن المستغرق</h4><div class="value" id="resTime">00:00</div></div>
+                </div>
+                <div class="chart-container">
+                    <div class="bar-wrapper"><div class="bar green" id="barPerc"></div><div class="bar-label">نسبة التقبل</div></div>
+                    <div class="bar-wrapper"><div class="bar red" id="barMissed"></div><div class="bar-label">النسبة المفقودة</div></div>
+                </div>
+            </div>
+            <div class="finish-action">
+                <button class="go-home-btn" onclick="goToHome()">الانتقال للصفحة الرئيسية للمنصة <i class="fa-solid fa-house"></i></button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.getElementById("studentIdDisplay").innerText = currentUser;
+        
+        // بدء حساب الوقت عند فتح الصفحة
+        let startTime = new Date();
+
+        // تعريف العبارات وتحديد إذا كانت إيجابية أو عكسية (سلبية)
+        const surveyStatements = [
+            { text: "أستطيع التعامل مع واجهة Google Classroom دون الحاجة إلى مهارات متقدمة.", reverse: false },
+            { text: "أستطيع إعداد استبانات واختبارات إلكترونية عبر Google Form بخطوات بسيطة.", reverse: false },
+            { text: "أتحكم في تنظيم الملفات داخل Google Drive بطريقة واضحة وسهلة.", reverse: false },
+            { text: "أستخدم Google Meet لعقد الاجتماعات الافتراضية بسهولة.", reverse: false },
+            { text: "أجد صعوبة وتعقيداً في استخدام منصة Google Classroom لإدارة المهام والواجبات.", reverse: true }
+        ];
+
+        const tbody = document.getElementById('surveyTableBody');
+        
+        surveyStatements.forEach((item, index) => {
+            let row = `<tr>
+                <td>${index + 1}</td>
+                <td class="text-right">${item.text}</td>
+                <td><input type="radio" name="s${index}" value="دائما" required></td>
+                <td><input type="radio" name="s${index}" value="أحيانا"></td>
+                <td><input type="radio" name="s${index}" value="نادرا"></td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+
+        function submitSurvey() {
+            let allAnswered = true;
+            let surveyData = {};
+            let totalScore = 0;
+            
+            for(let i = 0; i < surveyStatements.length; i++) {
+                let selected = document.querySelector(`input[name="s${i}"]:checked`);
+                if(!selected) {
+                    allAnswered = false;
+                    break;
+                }
+                
+                let answerValue = selected.value;
+                surveyData[`s${i}`] = answerValue;
+                
+                // حساب الدرجات بناءً على نوع العبارة
+                let itemScore = 0;
+                if (!surveyStatements[i].reverse) {
+                    // عبارة إيجابية
+                    if (answerValue === "دائما") itemScore = 3;
+                    else if (answerValue === "أحيانا") itemScore = 2;
+                    else if (answerValue === "نادرا") itemScore = 1;
+                } else {
+                    // عبارة عكسية (سلبية)
+                    if (answerValue === "دائما") itemScore = 1;
+                    else if (answerValue === "أحيانا") itemScore = 2;
+                    else if (answerValue === "نادرا") itemScore = 3;
+                }
+                
+                totalScore += itemScore;
+            }
+
+            if(!allAnswered) {
+                alert("يرجى الإجابة على جميع العبارات قبل الإرسال.");
+                return;
+            }
+
+            // حساب الوقت المستغرق
+            let timeDiff = Math.floor((new Date() - startTime) / 1000);
+            let mins = Math.floor(timeDiff / 60); let secs = timeDiff % 60;
+            let timeString = `${mins}:${secs < 10 ? '0' : ''}${secs} دقائق`;
+
+            // حساب النسبة المئوية
+            let maxPossibleScore = surveyStatements.length * 3;
+            let perc = (totalScore / maxPossibleScore) * 100;
+
+            // حفظ الإجابات والدرجة في المتصفح
+            localStorage.setItem(currentUser + "_surveyAnswers", JSON.stringify(surveyData));
+            localStorage.setItem(currentUser + "_surveyScore", totalScore);
+            localStorage.setItem(currentUser + "_surveyDone", "true");
+            
+            // تحديث بيانات الداش بورد
+            document.getElementById("resScore").innerText = totalScore;
+            document.getElementById("resMaxScore").innerText = maxPossibleScore;
+            document.getElementById("resPerc").innerText = Math.round(perc) + "%";
+            document.getElementById("resTime").innerText = timeString;
+
+            // تحريك الرسم البياني
+            setTimeout(() => {
+                document.getElementById("barPerc").style.height = perc + "%";
+                document.getElementById("barPerc").innerText = Math.round(perc) + "%";
+                document.getElementById("barMissed").style.height = (100 - perc) + "%";
+                document.getElementById("barMissed").innerText = Math.round(100 - perc) + "%";
+            }, 300);
+
+            // إخفاء الاستبيان وإظهار النتيجة
+            document.getElementById("view-survey").classList.remove("active");
+            document.getElementById("view-result").classList.add("active");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goToHome() {
+            window.location.href = "home.html";
+        }
+    </script>
+</body>
+</html>
+

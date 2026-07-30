@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الاختبار التحصيلي القبلي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Cairo', sans-serif; background-color: #f4f7fa; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+
+        .top-header { width: 100%; max-width: 900px; background-color: #1a2b4c; color: white; padding: 15px 25px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .brand-title { font-weight: 900; font-size: 20px; }
+        .student-badge { background: #5b8ee5; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+
+        .app-container { width: 100%; max-width: 900px; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 40px; position: relative; overflow: hidden; }
+
+        .view-section { display: none; animation: fadeIn 0.4s ease; }
+        .view-section.active { display: block; }
+
+        .instructions h2 { color: #1a2b4c; font-size: 28px; margin-bottom: 20px; font-weight: 900; border-bottom: 3px solid #f0f4f8; padding-bottom: 15px; }
+        .instructions p, .instructions li { color: #555; font-size: 16px; line-height: 1.8; margin-bottom: 15px; font-weight: 600; }
+        .instructions ul { padding-right: 25px; margin-bottom: 30px; }
+        .start-btn { background: #2980b9; color: white; border: none; padding: 15px 40px; font-size: 18px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: 0.3s; display: block; margin: 0 auto; font-family: 'Cairo', sans-serif; }
+        .start-btn:hover { background: #1f6391; transform: translateY(-2px); }
+
+        .progress-bar { width: 100%; height: 8px; background: #eef2f5; border-radius: 10px; margin-bottom: 30px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #2ecc71; width: 0%; transition: width 0.3s; }
+        .question-header { display: flex; justify-content: space-between; color: #7f8c8d; font-weight: 700; margin-bottom: 20px; font-size: 15px; }
+        .question-text { font-size: 22px; color: #1a2b4c; font-weight: 800; margin-bottom: 30px; line-height: 1.5; }
+        
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 30px; }
+        .option-btn { background: #f8faff; border: 2px solid #eef2f5; padding: 18px 20px; border-radius: 10px; font-family: 'Cairo', sans-serif; font-size: 16px; font-weight: 700; color: #34495e; cursor: pointer; transition: 0.2s; text-align: right; }
+        .option-btn:hover { border-color: #5b8ee5; background: #f0f4f8; }
+        .option-btn.selected { background: #5b8ee5; color: white; border-color: #5b8ee5; }
+
+        .next-btn { background: #f39c12; color: white; border: none; padding: 15px 30px; font-size: 16px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: 0.3s; width: 100%; font-family: 'Cairo', sans-serif; opacity: 0.5; pointer-events: none; }
+        .next-btn.active { opacity: 1; pointer-events: auto; }
+        .next-btn:hover { background: #e67e22; }
+
+        .result-title { text-align: center; color: #1a2b4c; font-size: 28px; font-weight: 900; margin-bottom: 40px; }
+        .dashboard-layout { display: flex; gap: 40px; flex-wrap: wrap; }
+        
+        .stats-container { flex: 1; min-width: 300px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #eee; }
+        .stat-card h4 { font-size: 14px; margin-bottom: 10px; color: #7f8c8d; }
+        .stat-card .value { font-size: 28px; font-weight: 900; }
+        .stat-card.correct .value { color: #2ecc71; }
+        .stat-card.wrong .value { color: #e74c3c; }
+        .stat-card.perc .value { color: #2980b9; }
+        .stat-card.time .value { color: #f39c12; font-size: 24px; }
+
+        .chart-container { flex: 1; min-width: 300px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #eee; display: flex; align-items: flex-end; justify-content: center; gap: 40px; height: 250px; position: relative; padding-bottom: 40px; }
+        .chart-container::before { content: ""; position: absolute; top: 20px; left: 20px; right: 20px; bottom: 40px; background-image: linear-gradient(to bottom, #f0f0f0 1px, transparent 1px); background-size: 100% 20%; z-index: 0; }
+        .bar-wrapper { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; width: 60px; }
+        .bar { width: 100%; border-radius: 5px 5px 0 0; transition: height 1s cubic-bezier(0.4, 0, 0.2, 1); height: 0; display: flex; justify-content: center; align-items: flex-start; padding-top: 10px; color: white; font-weight: bold; }
+        .bar.green { background: linear-gradient(to top, #27ae60, #2ecc71); }
+        .bar.red { background: linear-gradient(to top, #c0392b, #e74c3c); }
+        .bar-label { position: absolute; bottom: -30px; font-weight: 700; color: #34495e; font-size: 14px; }
+
+        .finish-action { margin-top: 40px; text-align: center; }
+        .go-survey-btn { background: #1a2b4c; color: white; border: none; padding: 15px 40px; font-size: 18px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: 0.3s; font-family: 'Cairo', sans-serif; display: inline-flex; align-items: center; gap: 10px; }
+        .go-survey-btn:hover { background: #2980b9; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(41, 128, 185, 0.3); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 600px) { .app-container { padding: 25px; } .dashboard-layout { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+    <script>
+        // توجيه أمني لصفحة الاختبار
+        let currentUser = localStorage.getItem("currentUser");
+        if (!currentUser) window.location.href = "index.html"; 
+        
+        if (localStorage.getItem(currentUser + "_preTestDone") === "true") {
+            if (localStorage.getItem(currentUser + "_surveyDone") !== "true") {
+                window.location.href = "survey.html";
+            } else {
+                window.location.href = "home.html";
+            }
+        }
+    </script>
+
+    <div class="top-header">
+        <div class="brand-title">البيئة الذكية للتحول الرقمي</div>
+        <div class="student-badge">طالب: <span id="studentIdDisplay"></span></div>
+    </div>
+
+    <div class="app-container">
+        
+        <div id="view-instructions" class="view-section active instructions">
+            <h2>تعليمات الإجابة عن الاختبار</h2>
+            <p><strong>عزيزي الطالب:</strong> يرجى اتباع التعليمات التالية بعناية والاسترشاد بها قبل أن تقوم بالإجابة عن هذا الاختبار.</p>
+            <p><strong>هدف الاختبار:</strong> قياس مدى تحصيلك في الجوانب المعرفية المرتبطة بالتحول الرقمي.</p>
+            <ul>
+                <li>يتكون هذا الاختبار من جزئين: الجزء الأول (صواب وخطأ)، والجزء الثاني (اختيار من متعدد).</li>
+                <li>في أسئلة الصواب والخطأ، انقر على العلامة الصحيحة ثم اضغط على السؤال التالي.</li>
+                <li>في أسئلة الاختيار من متعدد، انقر على الإجابة التي تراها صحيحة من بين البدائل المتاحة.</li>
+                <li>سوف تعطى تقريرًا في نهاية الاختبار بعدد الإجابات الصواب، والخطأ، والنسبة المئوية، والزمن المستغرق.</li>
+            </ul>
+            <button class="start-btn" onclick="startTest()">بدء الاختبار الآن ➔</button>
+        </div>
+
+        <div id="view-question" class="view-section">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="question-header"><span id="qPart">الجزء الأول</span><span id="qCounter">السؤال 1 من 10</span></div>
+            <div class="question-text" id="qText">جاري تحميل السؤال...</div>
+            <div class="options-grid" id="optionsGrid"></div>
+            <button class="next-btn" id="nextBtn" onclick="submitAnswer()">التالي ➔</button>
+        </div>
+
+        <div id="view-result" class="view-section">
+            <h2 class="result-title">تقرير نتيجة الاختبار</h2>
+            <div class="dashboard-layout">
+                <div class="stats-container">
+                    <div class="stat-card correct"><h4>الإجابات الصحيحة</h4><div class="value" id="resCorrect">0</div></div>
+                    <div class="stat-card wrong"><h4>الإجابات الخاطئة</h4><div class="value" id="resWrong">0</div></div>
+                    <div class="stat-card perc" style="grid-column: span 2;"><h4>النسبة المئوية للدرجة الكلية</h4><div class="value" id="resPerc">0%</div></div>
+                    <div class="stat-card time" style="grid-column: span 2;"><h4>الزمن المستغرق</h4><div class="value" id="resTime">00:00</div></div>
+                </div>
+                <div class="chart-container">
+                    <div class="bar-wrapper"><div class="bar green" id="barCorrect"></div><div class="bar-label">صحيحة</div></div>
+                    <div class="bar-wrapper"><div class="bar red" id="barWrong"></div><div class="bar-label">خاطئة</div></div>
+                </div>
+            </div>
+            <div class="finish-action">
+                <button class="go-survey-btn" onclick="goToSurvey()">الانتقال لمقياس التقبل التكنولوجي ➔</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.getElementById("studentIdDisplay").innerText = currentUser;
+
+        const questions = [
+            { part: "الجزء الأول: أسئلة الصواب والخطأ", type: "tf", text: "لا يدعم برنامج Canva تغيير لغة واجهة الاستخدام بعد تسجيل الدخول.", options: ["صواب", "خطأ"], answer: 1 },
+            { part: "الجزء الأول: أسئلة الصواب والخطأ", type: "tf", text: "يمكن تعديل أبعاد الشريحة بما يتناسب مع متطلبات العرض من خلال Resize Page.", options: ["صواب", "خطأ"], answer: 0 },
+            { part: "الجزء الأول: أسئلة الصواب والخطأ", type: "tf", text: "لا يمكن تغيير الاسم الافتراضي للعرض التقديمي بعد إنشائه.", options: ["صواب", "خطأ"], answer: 1 },
+            { part: "الجزء الأول: أسئلة الصواب والخطأ", type: "tf", text: "تُطبق حركات الانتقال في كانفا على العناصر داخل الشريحة وليس على الشريحة نفسها.", options: ["صواب", "خطأ"], answer: 1 },
+            { part: "الجزء الأول: أسئلة الصواب والخطأ", type: "tf", text: "يستخدم خيار PPTX لتصدير العرض كملف PowerPoint قابل للتحرير.", options: ["صواب", "خطأ"], answer: 0 },
+            { part: "الجزء الثاني: أسئلة الاختيار من متعدد", type: "mcq", text: "عند إعداد عرض تقديمي باستخدام Canva، يتميز البرنامج بتوفيره:", options: ["النمذجة الثلاثية.", "السحب والإفلات.", "لغات البرمجة.", "أنظمة التشغيل."], answer: 1 },
+            { part: "الجزء الثاني: أسئلة الاختيار من متعدد", type: "mcq", text: "تعدد صيغ التصدير من خلال Canva يفيد المستخدم في:", options: ["تثبيت حجم الملف.", "تقليل حجم الشرائح.", "تنوع طرق العرض.", "تعديل حجم الخط."], answer: 2 },
+            { part: "الجزء الثاني: أسئلة الاختيار من متعدد", type: "mcq", text: "لتعديل صورة الحساب داخل Canva يتم الدخول إلى:", options: ["Animate.", "Download.", "Background.", "Settings."], answer: 3 },
+            { part: "الجزء الثاني: أسئلة الاختيار من متعدد", type: "mcq", text: "يستخدم خيار Edit داخل إعدادات Canva من أجل:", options: ["تغيير زمن الانتقال.", "تغيير شكل القالب.", "تغيير الاسم المسجل.", "تغيير صيغة التصدير."], answer: 2 },
+            { part: "الجزء الثاني: أسئلة الاختيار من متعدد", type: "mcq", text: "يستخدم الأمر Duplicate Page داخل Canva عند الرغبة في:", options: ["إنشاء نسخة من الشريحة.", "تغيير خلفية الشريحة.", "إضافة حركة للشريحة.", "إضافة انتقال للشريحة."], answer: 0 }
+        ];
+
+        let currentQIndex = 0; let score = 0; let selectedOption = -1; let startTime;
+
+        function startTest() {
+            startTime = new Date();
+            document.getElementById("view-instructions").classList.remove("active");
+            document.getElementById("view-question").classList.add("active");
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            selectedOption = -1;
+            document.getElementById("nextBtn").classList.remove("active");
+            let q = questions[currentQIndex];
+            document.getElementById("qPart").innerText = q.part;
+            document.getElementById("qCounter").innerText = `السؤال ${currentQIndex + 1} من ${questions.length}`;
+            document.getElementById("qText").innerText = q.text;
+            document.getElementById("progressFill").style.width = ((currentQIndex) / questions.length) * 100 + "%";
+
+            let grid = document.getElementById("optionsGrid");
+            grid.innerHTML = "";
+            grid.style.gridTemplateColumns = q.type === "tf" ? "1fr 1fr" : "1fr";
+
+            q.options.forEach((opt, index) => {
+                let btn = document.createElement("button");
+                btn.className = "option-btn"; btn.innerText = opt;
+                btn.onclick = () => selectOption(index, btn);
+                grid.appendChild(btn);
+            });
+
+            if(currentQIndex === questions.length - 1) document.getElementById("nextBtn").innerText = "إنهاء الاختبار ✔";
+        }
+
+        function selectOption(index, btn) {
+            selectedOption = index;
+            document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+            btn.classList.add("selected");
+            document.getElementById("nextBtn").classList.add("active");
+        }
+
+        function submitAnswer() {
+            if (selectedOption === -1) return;
+            if (selectedOption === questions[currentQIndex].answer) score++;
+            currentQIndex++;
+            if (currentQIndex < questions.length) loadQuestion();
+            else finishTest();
+        }
+
+        function finishTest() {
+            let timeDiff = Math.floor((new Date() - startTime) / 1000);
+            let mins = Math.floor(timeDiff / 60); let secs = timeDiff % 60;
+            let timeString = `${mins}:${secs < 10 ? '0' : ''}${secs} دقائق`;
+
+            let correctAns = score; let wrongAns = questions.length - score;
+            let perc = (score / questions.length) * 100;
+
+            document.getElementById("resCorrect").innerText = correctAns;
+            document.getElementById("resWrong").innerText = wrongAns;
+            document.getElementById("resPerc").innerText = Math.round(perc) + "%";
+            document.getElementById("resTime").innerText = timeString;
+
+            setTimeout(() => {
+                document.getElementById("barCorrect").style.height = perc + "%";
+                document.getElementById("barCorrect").innerText = Math.round(perc) + "%";
+                document.getElementById("barWrong").style.height = (100 - perc) + "%";
+                document.getElementById("barWrong").innerText = Math.round(100 - perc) + "%";
+            }, 300);
+
+            // حفظ النتيجة التفصيلية في المتصفح
+            localStorage.setItem(currentUser + "_preTestDone", "true");
+            localStorage.setItem(currentUser + "_preTestScore", Math.round(perc));
+            localStorage.setItem(currentUser + "_preTestCorrect", correctAns);
+            localStorage.setItem(currentUser + "_preTestWrong", wrongAns);
+
+            document.getElementById("view-question").classList.remove("active");
+            document.getElementById("view-result").classList.add("active");
+            document.getElementById("progressFill").style.width = "100%";
+        }
+
+        function goToSurvey() { window.location.href = "survey.html"; }
+    </script>
+</body>
+</html>

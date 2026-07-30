@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تواصل معنا - بيئة تنمية مهارات التحول الرقمي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Cairo', sans-serif; background-color: #f4f7fa; overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* ================= الشريط العلوي ================= */
+        .top-header { background-color: #ffffff; color: #1a2b4c; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: relative; z-index: 1002; }
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .menu-btn { font-size: 24px; cursor: pointer; transition: 0.2s; color: #1a2b4c; }
+        .menu-btn:hover { color: #5b8ee5; }
+        .brand-title { font-weight: 900; font-size: 22px; }
+        .brand-title span { background: #eef2f5; color: #5b8ee5; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; }
+        .logout-btn { background-color: #e74c3c; color: white; border: none; padding: 8px 20px; border-radius: 6px; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .logout-btn:hover { background-color: #c0392b; }
+
+        /* ================= شريط القوائم الأساسي ================= */
+        .main-nav { background-color: #1a2b4c; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 0 20px; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: center; }
+        .nav-list { list-style: none; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; padding: 5px 0; }
+        .nav-list > li { position: relative; }
+        .nav-list > li > a { display: flex; align-items: center; gap: 8px; padding: 14px 18px; color: white; text-decoration: none; font-weight: 700; font-size: 15px; cursor: pointer; border-radius: 8px; transition: 0.3s; }
+        .nav-list > li > a i { color: #5b8ee5; font-size: 16px; }
+        .nav-list > li > a:hover, .nav-list > li > a.active { background-color: #2980b9; }
+        .nav-list > li > a:hover i, .nav-list > li > a.active i { color: white; }
+
+        .dropdown { position: absolute; top: 100%; right: 0; background-color: white; min-width: 230px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-radius: 8px; border-top: 4px solid #5b8ee5; display: none; flex-direction: column; overflow: hidden; z-index: 1001; margin-top: 5px; }
+        .has-dropdown:hover .dropdown { display: flex; }
+        .dropdown a { padding: 12px 20px; color: #1a2b4c; text-decoration: none; font-size: 14px; font-weight: 700; border-bottom: 1px solid #f1f1f1; transition: 0.2s; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .dropdown a i { color: #5b8ee5; }
+        .dropdown a:hover { background-color: #f4f7fa; color: #5b8ee5; padding-right: 25px; }
+
+        /* ================= القوائم الجانبية ================= */
+        .sidebar { position: fixed; top: 0; right: -320px; width: 300px; height: 100vh; background: #1a2b4c; box-shadow: -5px 0 25px rgba(0,0,0,0.2); transition: 0.3s; z-index: 1005; padding-top: 20px; display: flex; flex-direction: column; color: white; }
+        .sidebar.active { right: 0; }
+        .sidebar-header { padding: 20px 25px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; background-color: #121e36; }
+        .sidebar-header h3 { color: white; font-size: 18px; font-weight: 900; }
+        .close-sidebar { font-size: 22px; color: rgba(255,255,255,0.6); cursor: pointer; transition: 0.2s; }
+        .close-sidebar:hover { color: #e74c3c; transform: rotate(90deg); }
+        .sidebar ul { list-style: none; padding: 0; margin-top: 15px; }
+        .sidebar ul li a { display: flex; align-items: center; gap: 12px; padding: 15px 25px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 15px; font-weight: 700; transition: 0.3s; border-right: 4px solid transparent; cursor: pointer; }
+        .sidebar ul li a i { font-size: 18px; width: 25px; text-align: center; color: #5b8ee5; }
+        .sidebar ul li a:hover, .sidebar ul li a.active { background-color: rgba(91, 142, 229, 0.15); color: white; border-right: 4px solid #5b8ee5; padding-right: 35px; }
+        
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1004; display: none; backdrop-filter: blur(2px); }
+        .overlay.active { display: block; }
+
+        /* ================= منطقة تواصل معنا (Profile Card) ================= */
+        .main-content { flex: 1; padding: 50px 20px; display: flex; justify-content: center; align-items: center; width: 100%; animation: fadeIn 0.6s; }
+        
+        .profile-card { background: white; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); max-width: 850px; width: 100%; text-align: center; padding: 50px 40px; border-top: 8px solid #1a2b4c; }
+        
+        .profile-img-container { position: relative; width: 160px; height: 160px; margin: 0 auto 25px; }
+        .profile-img-container img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid white; box-shadow: 0 0 0 4px #1a2b4c; transition: 0.4s; }
+        .profile-img-container:hover img { transform: scale(1.05); box-shadow: 0 0 0 4px #10a37f; }
+
+        .profile-name { font-size: 32px; font-weight: 900; color: #1a2b4c; margin-bottom: 5px; }
+        .profile-title { font-size: 18px; font-weight: 800; color: #10a37f; margin-bottom: 30px; }
+
+        .profile-desc { background: #f8faff; border: 1px dashed #c0d1eb; border-radius: 12px; padding: 25px; font-size: 16px; color: #444; font-weight: 600; line-height: 1.9; margin-bottom: 35px; text-align: justify; text-align-last: center; }
+
+        /* أزرار السوشيال ميديا */
+        .social-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
+        .social-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 12px 25px; border-radius: 30px; color: white; text-decoration: none; font-size: 16px; font-weight: 800; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .social-btn i { font-size: 20px; }
+        .social-btn:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); filter: brightness(1.1); color: white; }
+
+        .btn-whatsapp { background-color: #25D366; }
+        .btn-telegram { background-color: #0088cc; }
+        .btn-facebook { background-color: #1877F2; }
+        .btn-instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+        .btn-gmail { background-color: #EA4335; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .footer { text-align: center; padding: 25px; background-color: #1a2b4c; color: white; font-size: 14px; font-weight: 700; margin-top: auto; }
+
+        @media(max-width: 600px){
+            .profile-card { padding: 40px 20px; }
+            .social-btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+        // البوابات الأمنية للهوم
+        let currentUser = localStorage.getItem("currentUser");
+        if (!currentUser) { 
+            window.location.href = "index.html"; 
+        }
+    </script>
+
+    <div class="top-header">
+        <div class="header-right">
+            <div class="menu-btn" onclick="toggleSidebar('userSidebar')"><i class="fa-solid fa-bars"></i></div>
+            <div class="brand-title">بيئة تنمية مهارات التحول الرقمي <span>Beta</span></div>
+        </div>
+        <button class="logout-btn" onclick="logout()">تسجيل خروج <i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+    </div>
+
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li><a href="home.html"><i class="fa-solid fa-house"></i> الرئيسية</a></li>
+            <li><a href="guide.html"><i class="fa-solid fa-book"></i> دليل الطالب</a></li>
+            <li><a href="objectives.html"><i class="fa-solid fa-bullseye"></i> الأهداف العامة</a></li>
+            
+            <li class="has-dropdown">
+                <a><i class="fa-solid fa-file-pen"></i> أدوات القياس القبلي ▼</a>
+                <div class="dropdown">
+                    <a onclick="alert('لعرض نتيجتك، يرجى مراجعة لوحة الطالب.')"><i class="fa-solid fa-square-check"></i> الاختبار التحصيلي القبلي</a>
+                    <a onclick="alert('تم حفظ إجاباتك في مقياس التقبل التكنولوجي مسبقاً.')"><i class="fa-solid fa-list-check"></i> مقياس التقبل التكنولوجي</a>
+                </div>
+            </li>
+            
+            <li><a href="home.html"><i class="fa-solid fa-laptop-file"></i> المحتوى التعليمي</a></li>
+            
+            <li class="has-dropdown">
+                <a><i class="fa-solid fa-chart-simple"></i> أدوات القياس البعدي ▼</a>
+                <div class="dropdown">
+                    <a onclick="alert('مغلق حالياً.. يجب إتمام دراسة الموديولات أولاً.')"><i class="fa-solid fa-lock"></i> الاختبار التحصيلي البعدي</a>
+                    <a onclick="alert('مغلق حالياً.. يجب إتمام دراسة الموديولات أولاً.')"><i class="fa-solid fa-lock"></i> مقياس التقبل التكنولوجي</a>
+                </div>
+            </li>
+            
+            <li><a href="contact.html" class="active"><i class="fa-solid fa-headset"></i> تواصل معنا</a></li>
+        </ul>
+    </nav>
+
+    <div class="overlay" id="overlay" onclick="closeAllSidebars()"></div>
+
+    <div class="sidebar" id="userSidebar">
+        <div class="sidebar-header">
+            <div>
+                <h3>مرحباً، <span id="studentName"></span></h3>
+                <p style="color:#aab7b8; font-size:12px; margin-top:5px; font-weight:700;">طالب بكلية التربية</p>
+            </div>
+            <div class="close-sidebar" onclick="closeAllSidebars()"><i class="fa-solid fa-xmark"></i></div>
+        </div>
+        <ul>
+            <li><a href="dashboard.html"><i class="fa-solid fa-user-graduate"></i> لوحة الطالب</a></li>
+            <li><a href="about.html"><i class="fa-solid fa-circle-info"></i> عن البيئة</a></li>
+            <li><a onclick="alert('هذه الصفحة قيد الإنشاء حالياً ⏳'); closeAllSidebars();"><i class="fa-solid fa-link"></i> روابط تهمك</a></li>
+            <li><a href="support.html"><i class="fa-regular fa-comments"></i> الدعم والمساعدة</a></li>
+            <li><a href="contact.html" class="active"><i class="fa-solid fa-headset"></i> تواصل معنا</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="profile-card">
+            
+            <div class="profile-img-container">
+                <img src="1000092863.jpg" alt="صورة الباحث إسلام إمبارك">
+            </div>
+
+            <h2 class="profile-name">أ. إسلام عبد المجيد إمبارك</h2>
+            <div class="profile-title">المدرس المساعد بقسم تكنولوجيا التعليم - كلية التربية بجامعة الأزهر</div>
+
+            <div class="profile-desc">
+                حرصًا على دعم عملية التعلم وضمان تحقيق أقصى استفادة من البيئة التعليمية، يمكن التواصل في حال وجود أي استفسارات تتعلق بالمحتوى، أو متطلبات الأداء، أو أدوات القياس، أو عند مواجهة مشكلات تقنية، وذلك من خلال وسائل التواصل الموضحة أدناه.
+            </div>
+
+            <div class="social-buttons">
+                <a href="https://wa.me/qr/D2OMSRXECH7UE1" target="_blank" class="social-btn btn-whatsapp">
+                    <i class="fa-brands fa-whatsapp"></i> واتس آب
+                </a>
+                
+                <a href="https://t.me/Eslam_AbdelMageed" target="_blank" class="social-btn btn-telegram">
+                    <i class="fa-brands fa-telegram"></i> تيليجرام
+                </a>
+                
+                <a href="https://www.facebook.com/share/181MhpPCum/" target="_blank" class="social-btn btn-facebook">
+                    <i class="fa-brands fa-facebook-f"></i> فيسبوك
+                </a>
+                
+                <a href="https://www.instagram.com/eslammubark183?utm_source=qr&igsh=MXJmcmVzbzY1NGJrdg==" target="_blank" class="social-btn btn-instagram">
+                    <i class="fa-brands fa-instagram"></i> إنستجرام
+                </a>
+                
+                <a href="mailto:islammubark183@gmail.com" class="social-btn btn-gmail">
+                    <i class="fa-solid fa-envelope"></i> جيميل
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="footer">جميع الحقوق محفوظة للباحث © 2026</div>
+
+    <script>
+        document.getElementById("studentName").innerText = currentUser;
+
+        // دوال القوائم الجانبية
+        function toggleSidebar(id) { 
+            closeAllSidebars(); 
+            document.getElementById(id).classList.add("active"); 
+            document.getElementById("overlay").classList.add("active"); 
+        }
+        
+        function closeAllSidebars() { 
+            document.getElementById("userSidebar").classList.remove("active"); 
+            document.getElementById("overlay").classList.remove("active"); 
+        }
+
+        function logout() { 
+            if(confirm("هل تريد بالتأكيد تسجيل الخروج؟")) { 
+                localStorage.removeItem("currentUser"); 
+                window.location.href = "index.html"; 
+            } 
+        }
+    </script>
+</body>
+</html>
+

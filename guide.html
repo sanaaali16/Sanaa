@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دليل الطالب - بيئة تنمية مهارات التحول الرقمي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Cairo', sans-serif; background-color: #f4f7fa; overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* ================= الشريط العلوي ================= */
+        .top-header { background-color: #ffffff; color: #1a2b4c; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: relative; z-index: 1002; }
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .menu-btn { font-size: 24px; cursor: pointer; transition: 0.2s; color: #1a2b4c; }
+        .menu-btn:hover { color: #5b8ee5; }
+        .brand-title { font-weight: 900; font-size: 22px; }
+        .brand-title span { background: #eef2f5; color: #5b8ee5; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; }
+        .logout-btn { background-color: #e74c3c; color: white; border: none; padding: 8px 20px; border-radius: 6px; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .logout-btn:hover { background-color: #c0392b; }
+
+        /* ================= شريط القوائم الأساسي ================= */
+        .main-nav { background-color: #1a2b4c; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 0 20px; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: center; }
+        .nav-list { list-style: none; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; padding: 5px 0; }
+        .nav-list > li { position: relative; }
+        .nav-list > li > a { display: flex; align-items: center; gap: 8px; padding: 14px 18px; color: white; text-decoration: none; font-weight: 700; font-size: 15px; cursor: pointer; border-radius: 8px; transition: 0.3s; }
+        .nav-list > li > a i { color: #5b8ee5; font-size: 16px; }
+        .nav-list > li > a:hover, .nav-list > li > a.active { background-color: #2980b9; }
+        .nav-list > li > a:hover i, .nav-list > li > a.active i { color: white; }
+
+        .dropdown { position: absolute; top: 100%; right: 0; background-color: white; min-width: 230px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-radius: 8px; border-top: 4px solid #5b8ee5; display: none; flex-direction: column; overflow: hidden; z-index: 1001; margin-top: 5px; }
+        .has-dropdown:hover .dropdown { display: flex; }
+        .dropdown a { padding: 12px 20px; color: #1a2b4c; text-decoration: none; font-size: 14px; font-weight: 700; border-bottom: 1px solid #f1f1f1; transition: 0.2s; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .dropdown a i { color: #5b8ee5; }
+        .dropdown a:hover { background-color: #f4f7fa; color: #5b8ee5; padding-right: 25px; }
+
+        /* ================= القوائم الجانبية ================= */
+        .sidebar { position: fixed; top: 0; right: -320px; width: 300px; height: 100vh; background: #1a2b4c; box-shadow: -5px 0 25px rgba(0,0,0,0.2); transition: 0.3s; z-index: 1005; padding-top: 20px; display: flex; flex-direction: column; color: white; }
+        .sidebar.active { right: 0; }
+        .sidebar-header { padding: 20px 25px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; background-color: #121e36; }
+        .sidebar-header h3 { color: white; font-size: 18px; font-weight: 900; }
+        .close-sidebar { font-size: 22px; color: rgba(255,255,255,0.6); cursor: pointer; transition: 0.2s; }
+        .close-sidebar:hover { color: #e74c3c; transform: rotate(90deg); }
+        .sidebar ul { list-style: none; padding: 0; margin-top: 15px; }
+        .sidebar ul li a { display: flex; align-items: center; gap: 12px; padding: 15px 25px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 15px; font-weight: 700; transition: 0.3s; border-right: 4px solid transparent; cursor: pointer; }
+        .sidebar ul li a i { font-size: 18px; width: 25px; text-align: center; color: #5b8ee5; }
+        .sidebar ul li a:hover { background-color: rgba(91, 142, 229, 0.15); color: white; border-right: 4px solid #5b8ee5; padding-right: 35px; }
+        
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1004; display: none; backdrop-filter: blur(2px); }
+        .overlay.active { display: block; }
+
+        /* ================= منطقة المحتوى (دليل الطالب) ================= */
+        .main-content { flex: 1; padding: 40px 20px; max-width: 1000px; margin: 0 auto; width: 100%; }
+        
+        .page-title { text-align: center; color: #1a2b4c; font-size: 28px; font-weight: 900; margin-bottom: 30px; border-bottom: 3px solid #eef2f5; padding-bottom: 15px; display: inline-block; width: 100%; }
+        
+        /* تنسيق الطيات (Accordion) */
+        .accordion { display: flex; flex-direction: column; gap: 15px; }
+        .acc-item { background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #eef2f5; overflow: hidden; transition: 0.3s; }
+        .acc-item:hover { border-color: #5b8ee5; box-shadow: 0 4px 15px rgba(91, 142, 229, 0.1); }
+        
+        .acc-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 25px; cursor: pointer; background: white; transition: 0.3s; }
+        .acc-header-left { display: flex; align-items: center; gap: 15px; }
+        .acc-icon { width: 50px; height: 50px; background: #f4f7fa; color: #5b8ee5; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 22px; transition: 0.3s; }
+        .acc-title { font-size: 20px; font-weight: 800; color: #1a2b4c; }
+        .acc-arrow { font-size: 18px; color: #7f8c8d; transition: transform 0.3s; }
+        
+        /* تأثيرات عند الفتح */
+        .acc-item.active .acc-header { background: #f8faff; border-bottom: 1px solid #eef2f5; }
+        .acc-item.active .acc-icon { background: #5b8ee5; color: white; }
+        .acc-item.active .acc-arrow { transform: rotate(180deg); color: #5b8ee5; }
+        
+        .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; background: white; }
+        .acc-content { padding: 25px; font-size: 16px; color: #444; line-height: 1.9; text-align: justify; }
+        
+        /* تنسيق القوائم النقطية لتكون أكاديمية */
+        .acc-content ul { padding-right: 20px; margin-top: 10px; list-style-type: square; }
+        .acc-content ul.no-bullets { list-style-type: none; padding-right: 0; }
+        .acc-content ul li { margin-bottom: 8px; color: #2c3e50; font-weight: 600; }
+        .acc-content p { margin-bottom: 10px; }
+
+        /* برواز تواصل معنا الخاص */
+        .contact-notice { border: 1px solid #d35400; border-radius: 8px; padding: 15px; margin-top: 25px; text-align: center; color: #d35400; font-weight: 800; font-size: 18px; background-color: #fdf3f2; }
+
+        /* زرار التحميل */
+        .download-btn-container { text-align: center; margin-top: 40px; }
+        .download-btn { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(45deg, #1a2b4c, #2980b9); color: white; font-size: 18px; font-weight: 800; padding: 15px 40px; border-radius: 30px; text-decoration: none; transition: 0.3s; box-shadow: 0 5px 15px rgba(26, 43, 76, 0.2); }
+        .download-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(26, 43, 76, 0.3); }
+
+        .footer { text-align: center; padding: 25px; background-color: #1a2b4c; color: white; font-size: 14px; font-weight: 700; margin-top: auto; }
+    </style>
+</head>
+<body>
+
+    <script>
+        // البوابات الأمنية للهوم
+        let currentUser = localStorage.getItem("currentUser");
+        if (!currentUser) { 
+            window.location.href = "index.html"; 
+        }
+    </script>
+
+    <div class="top-header">
+        <div class="header-right">
+            <div class="menu-btn" onclick="toggleSidebar('userSidebar')"><i class="fa-solid fa-bars"></i></div>
+            <div class="brand-title">بيئة تنمية مهارات التحول الرقمي <span>Beta</span></div>
+        </div>
+        <button class="logout-btn" onclick="logout()">تسجيل خروج <i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+    </div>
+
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li><a href="home.html"><i class="fa-solid fa-house"></i> الرئيسية</a></li>
+            <li><a href="guide.html" class="active"><i class="fa-solid fa-book"></i> دليل الطالب</a></li>
+            <li><a href="objectives.html"><i class="fa-solid fa-bullseye"></i> الأهداف العامة</a></li>
+            
+            <li class="has-dropdown">
+                <a><i class="fa-solid fa-file-pen"></i> أدوات القياس القبلي ▼</a>
+                <div class="dropdown">
+                    <a onclick="alert('لعرض نتيجتك، يرجى مراجعة لوحة الطالب.')"><i class="fa-solid fa-square-check"></i> الاختبار التحصيلي القبلي</a>
+                    <a onclick="alert('تم حفظ إجاباتك في مقياس التقبل التكنولوجي مسبقاً.')"><i class="fa-solid fa-list-check"></i> مقياس التقبل التكنولوجي</a>
+                </div>
+            </li>
+            
+            <li><a href="home.html"><i class="fa-solid fa-laptop-file"></i> المحتوى التعليمي</a></li>
+            
+            <li class="has-dropdown">
+                <a><i class="fa-solid fa-chart-simple"></i> أدوات القياس البعدي ▼</a>
+                <div class="dropdown">
+                    <a onclick="alert('مغلق حالياً.. يجب إتمام دراسة الموديولات أولاً.')"><i class="fa-solid fa-lock"></i> الاختبار التحصيلي البعدي</a>
+                    <a onclick="alert('مغلق حالياً.. يجب إتمام دراسة الموديولات أولاً.')"><i class="fa-solid fa-lock"></i> مقياس التقبل التكنولوجي</a>
+                </div>
+            </li>
+            
+            <li><a href="contact.html"><i class="fa-solid fa-headset"></i> تواصل معنا</a></li>
+        </ul>
+    </nav>
+
+    <div class="overlay" id="overlay" onclick="closeAllSidebars()"></div>
+
+    <div class="sidebar" id="userSidebar">
+        <div class="sidebar-header">
+            <div>
+                <h3>مرحباً، <span id="studentName"></span></h3>
+                <p style="color:#aab7b8; font-size:12px; margin-top:5px; font-weight:700;">طالب بكلية التربية</p>
+            </div>
+            <div class="close-sidebar" onclick="closeAllSidebars()"><i class="fa-solid fa-xmark"></i></div>
+        </div>
+        <ul>
+            <li><a href="dashboard.html"><i class="fa-solid fa-user-graduate"></i> لوحة الطالب</a></li>
+            <li><a href="about.html"><i class="fa-solid fa-circle-info"></i> عن البيئة</a></li>
+            <li><a onclick="alert('هذه الصفحة قيد الإنشاء حالياً ⏳'); closeAllSidebars();"><i class="fa-solid fa-link"></i> روابط تهمك</a></li>
+            <li><a href="support.html"><i class="fa-regular fa-comments"></i> الدعم والمساعدة</a></li>
+            <li><a href="contact.html"><i class="fa-solid fa-headset"></i> تواصل معنا</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <h2 class="page-title">دليل الطالب التعليمي</h2>
+
+        <div class="accordion">
+            
+            <div class="acc-item">
+                <div class="acc-header" onclick="toggleAccordion(this)">
+                    <div class="acc-header-left">
+                        <div class="acc-icon"><i class="fa-solid fa-hand-sparkles"></i></div>
+                        <div class="acc-title">مقدمة الدليل</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-arrow"></i>
+                </div>
+                <div class="acc-body">
+                    <div class="acc-content">
+                        <p><strong>عزيزي الطالب ...</strong></p>
+                        <p>السلام عليكم ورحمة الله وبركاته ،،،</p>
+                        <p>مرحبًا بك عزيزي الطالب في بيئة تعلم مصممة لأجلك، والتي تهدف إلى تنمية بعض مهارات التحول الرقمي.</p>
+                        <p>ويسعدني أن أقدم لك هذا الدليل الذي يهدف إلى تزويدك بالمعلومات المتعلقة بالهدف العام من البيئة، والمتطلبات الأساسية للتعامل مع للدخول إلى بيئة التعلم عبر الإنترنت، وسوف يقدم الدليل خطوات الاستخدام بدايةً من كيفية دخولك لبيئة التعلم عبر الإنترنت ودراستك للموديولات التعليمية، مروراً بكيفية سيرك وتقدمك في دراسة المحتوى التعليمية وأداء الاختبارات بكل موديول ونهايةً بتسجيل خروجك من بيئة التعلم.</p>
+                        <p>لذا يرجى قراءة هذا الدليل بعناية، والاسترشاد به أثناء دراستك للمحتوى التعليمية عبر بيئة التعلم، حتى يتسنى لك التقدم في دراسة المحتوى وتحقيق الأهداف التعليمية المنشودة منها.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acc-item">
+                <div class="acc-header" onclick="toggleAccordion(this)">
+                    <div class="acc-header-left">
+                        <div class="acc-icon"><i class="fa-solid fa-bullseye"></i></div>
+                        <div class="acc-title">الهدف العام من دراسة المحتوى التعليمي</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-arrow"></i>
+                </div>
+                <div class="acc-body">
+                    <div class="acc-content">
+                        <p>يهدف هذا المحتوي إلى تمكينك من بعض مهارات التحول الرقمي:</p>
+                        <ul>
+                            <li>تصميم المحتوى التعليمي تطبيقًا على برنامج كانفا Canva .</li>
+                            <li>إدارة عناصر المحتوى التعليمي الرقمي تطبيقًا على منصة جوجل كلاس روم Google Classroom.</li>
+                            <li>وسائل التقييم الالكتروني تطبيقًا على Google Forms.</li>
+                            <li>إدارة مستودعات التعلم الرقمية تطبيقًا على Google Drive.</li>
+                            <li>إدارة الاجتماعات الافتراضية تطبيقًا على Meet Google.</li>
+                            <li>استخدام أدوات الذكاء الاصطناعي تطبيقًا على ChatGPT.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acc-item">
+                <div class="acc-header" onclick="toggleAccordion(this)">
+                    <div class="acc-header-left">
+                        <div class="acc-icon"><i class="fa-solid fa-desktop"></i></div>
+                        <div class="acc-title">المتطلبات الأساسية للدخول إلى البيئة عبر الإنترنت</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-arrow"></i>
+                </div>
+                <div class="acc-body">
+                    <div class="acc-content">
+                        <p>يتطلب الاستخدام الجيد لبيئة التعلم أن يتوافر لديك ما يلي:</p>
+                        <ul>
+                            <li>جهاز كمبيوتر متصل بالإنترنت بسرعة مناسبة للتصفح والتحميل .</li>
+                            <li>يفضل استخدام سرعة الإنترنت الفائقة DSL، لتتمكن من سرعة التصفح والتحميل.</li>
+                            <li>استخدام متصفح ( Internet Explorer ) أو ( Google Chrome ) والذي من خلاله يمكنك الدخول لبيئة التعلم، وعرض ودراسة المحتوى التعليمية بها.</li>
+                            <li>للحصول على أفضل عرض يفضل استخدام أبعاد الشاشة القياسية بدقة 1024×768 بكسل.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acc-item">
+                <div class="acc-header" onclick="toggleAccordion(this)">
+                    <div class="acc-header-left">
+                        <div class="acc-icon"><i class="fa-solid fa-right-to-bracket"></i></div>
+                        <div class="acc-title">الدخول لبيئة التعلم</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-arrow"></i>
+                </div>
+                <div class="acc-body">
+                    <div class="acc-content">
+                        <p>عزيزي الطالب المعلم ... للدخول لبيئة التعلم، وتصفح المحتوى التعليمي قم باتباع الخطوات التالية:</p>
+                        <ul>
+                            <li>قم بفتح متصفح الإنترنت من جاز الكمبيوتر.</li>
+                            <li>قم بالاتصال بشبكة المعلومات الدولية (الإنترنت).</li>
+                            <li>اكتب العنوان الخاص ببيئة التعلم، بشريط العنوان الخاص بشاشة المتصفح.</li>
+                            <li>اضغط على زر إدخال (Enter) من لوحة مفاتيح الجهاز، أو المفتاح (go) بشريط العنوان، ليقوم المتصفح بتحميل الموقع الخاص بك.</li>
+                            <li>سوف تظهر لك شاشة (تسجيل الدخول) تقوم بإدخال البياناتك الخاصة بك (اسم المستخدم – كلمة المرور) بطريقة صحيحة، وهي بيانات خاصة بكل طالب على حدة من طلاب عينة البحث (يرجى عدم اطلاع أحد على هذه البيانات)، انقر بمؤشر الفأرة على أيقونة (تسجيل الدخول).</li>
+                            <li>بعد تسجيل بياناتك بطريقة صحيحة سيتم فتح (الاختبار التحصيلي القبلي) لتحدد مستواك قبل دراسة المحتوى التعليمي في بيئة التعلم.</li>
+                            <li>اقرأ تعليمات الاجابة عن الاختبار جيداً قبل إجابتك عن أسئلة الاختبار حتى تستطيع تحديد مستواك بدقة قبل دراسة الموديولات التعليمية.</li>
+                            <li>أجب عن جميع الأسئلة المعروضة، وبعدها يُعرض عليك نتيجة إجابتك والوقت المستغرق في الإجابة والنسبة المئوية.</li>
+                            <li>لن يسمح لك بالدخول على (الاختبار التحصيلي القبلي) إلا مرة واحدة فاحرص على اختيار الاجابة الصحيحة.</li>
+                            <li>بعد الانتهاء من إجابة الاختبار التحصيلي القبلي، سيتم فتح ( مقياس التقبل التكنولوجي) اقرأ تعليمات الاجابة عن المقياس جيداً قبل إجابتك.</li>
+                            <li>أجب عن جميع العبارات المعروضة، وبعدها يُعرض عليك نتيجة إجابتك والوقت المستغرق في الإجابة والنسبة المئوية.</li>
+                        </ul>
+                        <p style="margin-top: 15px; font-weight: bold;">الصفحة الرئيسة لبيئة التعلم، والتي تضم ما يلي:</p>
+                        <ul>
+                            <li>القوائم الأفقية لبيئة التعلم وتظهر أعلى الصفحة الرئيسة، وتضم التالي: (الرئيسة، دليل الطالب، الأهداف العامة، أدوات القياس القبلي، المحتوى التعليمي، أدوات القياس البعدي، تواصل معنا، تسجيل الخروج).</li>
+                            <li>الجزء الأيمن لبيئة التعلم ويظهر في الجانب الأيمن من الصفحة ويضم: (لوحة التحكم، عن البيئة، روابط تهمك، الدعم والمساعدة).</li>
+                            <li>الجزء الخاص بعرض المحتوى التعليمي في بيئة التعلم والذي يتوسط الصفحة الرئيسة لبيئة التعلم.</li>
+                            <li>كل قائمة من القوائم الأفقية تحتوي على معلومات أو استخدام خاص بها.</li>
+                            <li>بالنقر بمؤشر الفأرة على قائمة (المحتوى التعليمي) تظهر قائمة تضم ستة موديولات تعليمية.</li>
+                            <li>بالنقر بمؤشر الفأرة على كل موديول من هذه الموديولات تظهر قائمة شاشة أخرى تضم محاور رئيسية خاصة بكل موديول وهي: (مبررات دراسة الموديول، أهداف الموديول، المهمة القبلية، اختبار قبلي، المحتوى، المهمة البعدية اختبار بعدي).</li>
+                            <li>عند النقر بمؤشر الفأرة على أي عنصر من عناصر المحتوى التعليمية، يظهر محتواه مباشرة داخل الصفحة لدراسته.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acc-item">
+                <div class="acc-header" onclick="toggleAccordion(this)">
+                    <div class="acc-header-left">
+                        <div class="acc-icon"><i class="fa-solid fa-route"></i></div>
+                        <div class="acc-title">كيفية السير في دراسة المحتوى التعليمي في بيئة التعلم</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-arrow"></i>
+                </div>
+                <div class="acc-body">
+                    <div class="acc-content">
+                        <p>عزيزي الطالب المعلم... يرتبط تقدمك وإتقانك للمحتوى التعليمي (المتضمن داخل كل موديول) بجانبيه المعرفي والأدائي العملي، اتباعك وسيرك وفق العرض التالي:</p>
+                        <ul>
+                            <li>اقرأ دليل المتعلم جيدًا، ثم اقرأ بعناية أهمية دراسة المحتوي التعليمي والأهداف العامة له.</li>
+                            <li>بعد الانتهاء من إجابة (الاختبار التحصيلي القبلي)، سيتم فتح الصفحة الرئيسة لبيئة التعلم، قف بمؤشر الفأرة على (المحتوى التعليمي) من شريط القوائم الرئيسة، وسوف تظهر قائمة بالموديولات التعليمة في بيئة التعلم وعددها ستة موديولات تعليمية.</li>
+                            <li>ادرس كل موديول من الموديولات التعليمية على حدة بدءًا من الموديول الأول وحتى الموديول السادس.</li>
+                            <li>بمجرد الضغط على الموديول التعليمي الأول تظهر قائمة أفقية تضم محاور رئيسية خاصة بكل موديول وهي كالتالي: (مبررات دراسة الموديول، أهداف الموديول، المهمة الأدائية للموديول، الاختبار القبلي، المحتوى التعليمي، المهمة الآدائية البعدية، الاختبار البعدي).</li>
+                            <li>اقرأ (مبررات دراسة الموديول، أهداف الموديول) حتى تتعرَّف أهداف المحتوى التعليمي، التي يراد أن تتحقق بعد أن تنتهي من دراسة الموديول حتى توجه نشاطك التعليمي لتحقيقها.</li>
+                            <li>قم تنفيذ (المهمة الأدائية القبلية) المطلوبة اعتمادًا على خبراتك السابقة ومعارفك الحالية دون الرجوع إلى محتوى الموديول.</li>
+                            <li>ادخل على (الاختبار القبلي) حيث يعرض عليك نوعين من الأسئلة (صواب وخطأ – اختيار من متعدد).</li>
+                            <li>اقرأ تعليمات الاجابة عن الاختبار القبلي جيداً قبل إجابتك عن أسئلة الاختبار.</li>
+                            <li>أجب على (الاختبار القبلي للموديول)؛ حيث يعمل على تهيئة العمليات العقلية لديك وتنظيم التركيب المعرفي لتلقي المعلومات الجديدة مما يسهل عملية التعلم، وكذلك يمكنك بعد الإجابة على الاختبار القبلي أن تتخذ قرارًا يتعلق بمواصلة دراسة الموديول الذي يليه.</li>
+                            <li>بعدها يُعرض عليك نتيجة إجابتك عن أسئلة الاختبار والوقت المستغرق في الإجابة، وعدد الإجابات الصحيحة وعدد الإجابات الخطأ والنسبة المئوية.</li>
+                            <li>إن حصلت على نسبة مئوية أعلى من 90% فسيتم توجيهك للموديول الثاني مباشرة، وإن حصلت على نسبة مئوية أقل من 90% فسيتم توجيهك لدراسة الموديول التعليمي مرة أخرى حتى تستطيع اجتياز الاختبار.</li>
+                            <li>أدخل على (الموديول التعليمي) الذي وجهت إليه، وقم بدراسة جميع عناصره، ولا تتخطى أي عنصر دون دراسته لتسهل عليك عملية التعلم.</li>
+                            <li>قم بالإجابة عن أسئلة (التقويم الذاتي) التي تجدها أثناء دراستك لعناصر المحتوى التعليمي بكل موديول.</li>
+                            <li>بعد دراستك لجميع عناصر المحتوى التعليمي بالموديول، بأداء النشاط المطلوب منك من خلال الاستعانة بالمحادثة الذكية الخاصة بالموديول.</li>
+                            <li>بعد الانتهاء يُطلب منك تنفيذ (المهمة الدائية البعدية) في ضوء ما اكتسبته من معارف ومهارات.</li>
+                            <li>قم بالدخول على (الاختبار البعدي) للتعرف على مستوى تقدمك في الجانب المعرفي المرتبط بالموديول، حيث يُعرض عليك نوعين من الأسئلة (صواب وخطأ – اختيار من متعدد).</li>
+                            <li>اقرأ تعليمات الإجابة عن الاختبار البعدي جيدًا قبل إجابتك عن أسئلة الاختبار.</li>
+                            <li>أجب على ( الاختبار البعدي للموديول )؛ حيث يهدف إلى قياس الجانب التحصيلي لديك بعد دراستك للمحتوى التعليمي بالموديول ، وكذلك يمكنك بعد الإجابة على الاختبار البعدي أن تتخذ قرارًا يتعلق بمواصلة دراسة الموديول الذي يليه.</li>
+                            <li>بعدها يُعرض عليك نتيجة إجابتك عن أسئلة الاختبار والوقت المستغرق في الإجابة، وعدد الإجابات الصحيحة وعدد الإجابات الخطأ والنسبة المئوية.</li>
+                            <li>إن حصلت على نسبة مئوية أعلى من 90% فسيتم توجيهك للموديول التالي مباشرة، وإن حصلت على نسبة مئوية أقل من 90% فسيتم توجيهك لدراسة الموديول التعليمي مرة أخرى حتى تستطيع اجتياز الاختبار.</li>
+                            <li>بعد انتهائك من الإجابة عن أسئلة (الاختبار البعدي بالموديول)، يمكنك الانتقال إلى الموديول التالي … وهكذا حتى تصل إلى نهاية دراستك للموديولات التعليمية.</li>
+                            <li>بعد انتهائك من دراسة الموديولات التعليمية، انتقل إلي إجابة (الاختبار التحصيلي البعدي) لتحدد مستواك بعد دراسة المحتوى التعليمي في بيئة التعلم.</li>
+                            <li>اقرأ تعليمات الاجابة عن الاختبار جيداً قبل إجابتك عن أسئلة الاختبار حتى تستطيع تحديد مستواك بدقة بعد دراسة الموديولات التعليمية.</li>
+                            <li>أجب عن جميع الأسئلة المعروضة، وبعدها يُعرض عليك نتيجة إجابتك والوقت المستغرق في الإجابة وعدد الإجابات الصحيحة وعدد الإجابات الخطأ والنسبة المئوية.</li>
+                            <li>لن يسمح لك بالدخول على (الاختبار التحصيلي البعدي) إلا مرة واحدة فاحرص على اختيار الاجابة الصحيحة أو النقر على (التالي) عند عدم معرفتك للإجابة الصحيحة.</li>
+                            <li>بعد الانتهاء من إجابة الاختبار التحصيلي القبلي، سيتم فتح ( مقياس التقبل التكنولوجي) اقرأ تعليمات الاجابة عن المقياس جيداً قبل إجابتك.</li>
+                            <li>أجب عن جميع العبارات المعروضة، وبعدها يُعرض عليك نتيجة إجابتك والوقت المستغرق في الإجابة والنسبة المئوية.</li>
+                        </ul>
+                        
+                        <div class="contact-notice">
+                            في حالة وجود أي مشكلة تواجهك أثناء عملية التعلم، يمكنك التواصل مع الباحث من خلال قائمة "تواصل معنا". مع أطيب التمنيات بالتوفيق!
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="download-btn-container">
+            <a href="دليل الطالب.docx" download class="download-btn">
+                <i class="fa-solid fa-file-arrow-down"></i> تحميل دليل الاستخدام (Word)
+            </a>
+        </div>
+
+    </div>
+
+    <div class="footer">جميع الحقوق محفوظة للباحث © 2026</div>
+
+    <script>
+        document.getElementById("studentName").innerText = currentUser;
+
+        // دالة فتح وقفل الطيات (Accordion)
+        function toggleAccordion(element) {
+            let item = element.parentElement;
+            let body = element.nextElementSibling;
+            
+            // قفل الباقيين لما تفتح واحد
+            document.querySelectorAll('.acc-item').forEach(otherItem => {
+                if (otherItem !== item && otherItem.classList.contains('active')) {
+                    otherItem.classList.remove('active');
+                    otherItem.querySelector('.acc-body').style.maxHeight = null;
+                }
+            });
+
+            if (item.classList.contains('active')) {
+                item.classList.remove('active');
+                body.style.maxHeight = null;
+            } else {
+                item.classList.add('active');
+                body.style.maxHeight = body.scrollHeight + "px";
+            }
+        }
+
+        // دوال القوائم الجانبية
+        function toggleSidebar(id) { 
+            closeAllSidebars(); 
+            document.getElementById(id).classList.add("active"); 
+            document.getElementById("overlay").classList.add("active"); 
+        }
+        
+        function closeAllSidebars() { 
+            document.getElementById("userSidebar").classList.remove("active"); 
+            document.getElementById("overlay").classList.remove("active"); 
+        }
+
+        function logout() { 
+            if(confirm("هل تريد بالتأكيد تسجيل الخروج؟")) { 
+                localStorage.removeItem("currentUser"); 
+                window.location.href = "index.html"; 
+            } 
+        }
+    </script>
+</body>
+</html>
+

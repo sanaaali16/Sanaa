@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الموديول الأول - كانفا</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { --primary-navy: #1a2b4c; --hover-light-blue: #5b8ee5; --bg-color: #f4f7fa; --whatsapp-color: #25D366; --canva-color: #8b3dff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg-color); color: #333; line-height: 1.8; padding-bottom: 90px;}
+
+        /* الشريط العلوي */
+        .top-bar { background-color: var(--primary-navy); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .top-bar h1 { font-size: 20px; font-weight: 800; }
+        .back-btn { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 8px; text-decoration: none; font-weight: 700; transition: 0.3s; }
+        .back-btn:hover { background: var(--hover-light-blue); }
+        
+        /* شريط التقدم */
+        .progress-container { background: white; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 30px;}
+        .progress-text { font-weight: 800; color: var(--primary-navy); margin-bottom: 5px; font-size: 16px;}
+        .progress-bar { width: 80%; max-width: 600px; height: 10px; background: #eef2f5; margin: 0 auto; border-radius: 10px; overflow: hidden;}
+        .progress-fill { height: 100%; background: var(--hover-light-blue); width: 0%; transition: 0.4s;}
+
+        /* المحتوى الأساسي */
+        .container { max-width: 1050px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .step-container { display: none; animation: fadeIn 0.5s; }
+        .step-container.active { display: block; }
+        h2.step-title { color: var(--primary-navy); font-size: 26px; font-weight: 900; margin-bottom: 20px; border-bottom: 3px solid #eef2f5; padding-bottom: 10px; text-align: center; }
+        
+        .content-image { width: 100%; max-width: 800px; border-radius: 12px; margin: 20px auto; display: block; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .content-text { font-size: 17px; margin-bottom: 15px; color: #444; text-align: justify; line-height: 1.9; }
+        
+        /* التفاف النص حول الصور */
+        .wrap-layout::after { content: ""; display: table; clear: both; }
+        .wrap-img-left { float: left; margin: 10px 30px 20px 0; max-width: 45%; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        /* نظام الشبكة للمزايا (عمودين) */
+        .grid-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0 30px; text-align: justify; margin-bottom: 20px; }
+        .content-list { margin-right: 20px; margin-bottom: 20px; }
+        .content-list li { margin-bottom: 10px; font-size: 17px; font-weight: 600; color: #444; }
+
+        /* الشاشات المقسومة الأصلية للأنشطة */
+        .split-layout { display: flex; gap: 30px; align-items: center; flex-wrap: wrap; margin-top: 20px; }
+        .split-layout .text-side { flex: 1; min-width: 300px; }
+        .split-layout .img-side { flex: 1; min-width: 300px; }
+
+        /* منطقة المهام */
+        .task-instructions { background: #fffcf5; border: 1px solid #fdeec0; padding: 25px; border-radius: 12px; margin-bottom: 25px; }
+        .task-instructions h3 { color: #e74c3c; margin-bottom: 15px; font-size: 20px; }
+        .action-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 15px 30px; border-radius: 10px; font-size: 18px; font-weight: 800; text-decoration: none; color: white; margin: 10px auto; width: 100%; max-width: 500px; transition: 0.3s; text-align: center; cursor: pointer; border: none; }
+        .whatsapp-btn { background-color: var(--whatsapp-color); max-width: max-content; padding: 12px 25px; margin: 0; }
+        .canva-btn { background: linear-gradient(45deg, #00c4cc, #8b3dff); display: flex; margin: 20px auto;}
+        
+        /* منطقة التسليم المحسنة بالنص الثابت */
+        .submission-area { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; align-items: center; margin-top: 20px; background: #fdfefe; padding: 20px; border-radius: 12px; border: 1px solid #eef2f5; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .submission-text { font-size: 18px; font-weight: 800; color: var(--primary-navy); margin-left: 10px;}
+
+        /* الشات بوت المحسن */
+        .chat-container { border: 1px solid #eef2f5; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.05); display: flex; flex-direction: column; height: 550px; }
+        .chat-header { background: var(--primary-navy); color: white; padding: 15px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        
+        .chat-fixed-top { background: #fdfefe; border-bottom: 1px solid #eee; display: flex; flex-direction: column; }
+        .chat-welcome-box { background: #eef2f5; color: #1a2b4c; margin: 15px; padding: 12px 18px; border-radius: 12px; font-size: 15px; line-height: 1.6; font-weight: 700; text-align: center;}
+        
+        /* تعديل الأزرار لتكون جزء من مساحة الرسائل */
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; background: #f9fbff; display: flex; flex-direction: column; gap: 15px; }
+        .chat-suggestions { padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 5px; }
+        .sugg-btn { background: white; border: 1px solid var(--hover-light-blue); color: var(--hover-light-blue); padding: 6px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; font-family: 'Cairo', sans-serif; }
+        .sugg-btn:hover { background: var(--hover-light-blue); color: white; }
+        
+        .msg-bubble { max-width: 85%; padding: 12px 18px; border-radius: 12px; font-size: 14px; line-height: 1.6; position: relative; animation: fadeIn 0.3s ease; }
+        .bot-msg { background: #eef2f5; color: #1a2b4c; align-self: flex-start; border-top-right-radius: 0; font-weight: 600; }
+        .user-msg { background: var(--hover-light-blue); color: white; align-self: flex-end; border-top-left-radius: 0; font-weight: 700; }
+        
+        .chat-input-area { display: flex; padding: 15px; background: #fff; border-top: 1px solid #eee; }
+        .chat-input-area input { flex: 1; border: 1px solid #ddd; padding: 12px 15px; border-radius: 8px; font-family: 'Cairo', sans-serif; outline: none; }
+        .chat-input-area button { background: var(--hover-light-blue); color: white; border: none; width: 45px; height: 45px; border-radius: 8px; margin-right: 10px; cursor: pointer; }
+
+        /* الاختبارات والتقويمات */
+        .quiz-box { background: #fdfefe; border: 1px solid #eef2f5; border-radius: 12px; padding: 25px; margin-bottom: 30px; }
+        .question { font-size: 18px; font-weight: 700; color: var(--primary-navy); margin-bottom: 15px; padding-top: 15px; }
+        .options-group { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 25px;}
+        .options-group.mcq { flex-direction: column; gap: 10px; }
+        
+        /* تحسين شكل أزرار الاختيارات عشان تكون بارزة جداً */
+        .option-label { flex: 1; min-width: 120px; background: #f8fbff; border: 2px solid #cbd5e1; padding: 14px; border-radius: 8px; text-align: center; cursor: pointer; font-weight: 800; font-size: 16px; color: #1a2b4c; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .options-group.mcq .option-label { text-align: right; }
+        input[type="radio"]:checked + .option-label { background: var(--hover-light-blue); color: white; border-color: var(--hover-light-blue); box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); }
+        input[type="radio"] { display: none; }
+        
+        .quiz-submit-btn { background: var(--primary-navy); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 18px; font-weight: 800; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 20px; font-family: 'Cairo', sans-serif;}
+        .quiz-submit-btn:hover { background: var(--hover-light-blue); }
+        
+        .quiz-result { display: none; padding: 20px; margin-top: 20px; border-radius: 8px; font-weight: 800; text-align: center; font-size: 18px; }
+        .result-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .result-partial { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .result-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        /* التنقل السفلي */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 15px 30px; display: flex; justify-content: space-between; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; }
+        .nav-btn { padding: 12px 30px; border-radius: 8px; font-size: 16px; font-weight: 800; cursor: pointer; border: none; display: flex; align-items: center; gap: 8px; transition: 0.3s; font-family: 'Cairo', sans-serif; background: var(--hover-light-blue); color: white; }
+        .next-btn.disabled { background: #ccc; color: #666; cursor: not-allowed; }
+        .next-btn.restart-btn { background: #e74c3c; color: white; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media(max-width: 768px){
+            .wrap-img-left { float: none; max-width: 100%; margin: 0 auto 20px; display: block; }
+            .grid-list { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <h1><i class="fa-solid fa-palette"></i> الموديول الأول</h1>
+        <a href="home.html" class="back-btn"><i class="fa-solid fa-house"></i> القائمة الرئيسية</a>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-text">شريط التقدم في دراسة الموديول</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div class="container">
+
+        <div class="step-container" id="step-1">
+            <h2 class="step-title">مبررات دراسة الموديول</h2>
+            <div class="wrap-layout">
+                <img src="1000089585.jpg" class="wrap-img-left">
+                <p class="content-text"><strong>عزيزي الطالب...</strong> في ظل الثورة المعلوماتية والتطورات المتسارعة أصبح من الضروري الاهتمام بطريقة تقديم المحتوى التعليمي إلى جانب الاهتمام بمضمونه، حيث يمثل تصميم المحتوى بصريًا عنصرًا أساسيًا في توضيح الأفكار وتنظيم المعلومات وجذب انتباه المتعلم وتيسير استيعابه للمادة التعليمية، ومن هنا تبرز أهمية مهارات تصميم المحتوى التعليمي، لما لها من دور في تحويل المعلومات إلى مواد تعليمية واضحة وجذابة تسهل الفهم وتدعم التعلم، ويهدف هذا الموديول إلى تمكين المتعلم من اكتساب مهارات تصميم المحتوى التعليمي وتطبيقها عمليًا باستخدام برنامج كانفا، بما يساعده على إنتاج مواد تعليمية تتسم بالوضوح والتنظيم والجاذبية، وتعكس فهمًا حقيقيًا للمحتوى، وتسهم في تطوير أدائه كمعلم أو مصمم محتوى تعليمي.</p>
+            </div>
+        </div>
+
+        <div class="step-container" id="step-2">
+            <h2 class="step-title">أهداف دراسة الموديول</h2>
+            <img src="1000089586.jpg" class="content-image">
+        </div>
+        
+        <div class="step-container" id="step-3">
+            <h2 class="step-title">المهمة الأدائية القبلية</h2>
+            <div class="task-instructions">
+                <h3>⛔ تعليمات أداء المهمة القبلية:</h3>
+                <p class="content-text">عزيزي المتعلم... قبل البدء في دراسة هذا الموديول، يُطلب منك تنفيذ المهمة المطلوبة اعتمادًا على خبراتك السابقة ومعارفك الحالية دون الرجوع إلى محتوى الموديول، وذلك بهدف التعرف على مستوى أدائك الحالي قبل الدراسة، يرجى مراعاة التعليمات الآتية:</p>
+                <ul class="content-list">
+                    <li>تنفيذ المهمة بصورة فردية.</li>
+                    <li>الاعتماد على مهاراتك الحالية دون الاستعانة بشرح الموديول.</li>
+                    <li>الالتزام بمتطلبات الأداء المحددة في نص المهمة.</li>
+                    <li>استيفاء جميع عناصر الأداء قبل التسليم.</li>
+                    <li>رفع ناتج الأداء في المكان المخصص داخل البيئة التعليمية.</li>
+                </ul>
+            </div>
+            <img src="1000090312.jpg" class="content-image">
+            <a href="https://www.canva.com" target="_blank" class="action-btn canva-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> تطبيق عملي على Canva ↗</a>
+            
+            <div class="submission-area">
+                <span class="submission-text">شارك رابط المهمة لمعلمك هنا ⬅️</span>
+                <a href="https://wa.me/qr/D2OMSRXECH7UE1" target="_blank" class="action-btn whatsapp-btn"><i class="fa-brands fa-whatsapp"></i> إرسال عبر الواتساب</a>
+            </div>
+        </div>
+
+        <div class="step-container" id="step-4">
+            <h2 class="step-title">تعليمات الاختبار القبلي</h2>
+            <div class="quiz-box">
+                <h3 style="color: var(--primary-navy); margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px;">🎯 هدف الاختبار:</h3>
+                <p class="content-text">هذا الاختبار وضع لقياس مدى تحصيلك في الجوانب المعرفية المرتبطة بمهارات تصميم المحتوى التعليمي تطبيقًا على برنامج كانفا Canva.</p>
+                
+                <h3 style="color: var(--primary-navy); margin-bottom: 15px; margin-top: 25px; border-bottom: 2px solid #eee; padding-bottom: 10px;">📝 تعليمات الاختبار:</h3>
+                <p class="content-text">من فضلك عزيزي الطالب اقرأ التعليمات التالية بعناية والاسترشاد بها قبل أن تبدأ في إجابة الاختبار:</p>
+                <ul class="content-list">
+                    <li>يتكون هذا الاختبار من جزئين، يشتمل الجزء الأول على عبارات من نوع الصواب والخطأ، ويشتمل الجزء الثانى على بنود من نوع الاختيار من متعدد.</li>
+                    <li>عند الإجابة عن أسئلة الصواب والخطأ سوف تجد أسفل كل سؤال علامتان، إحداهما صواب والأخرى خطأ، وعليك أن تضغط على العلامة الصحيحة باستخدام مؤشر الفأرة، والنقر على السؤال التالي.</li>
+                    <li>عند الإجابة عن بنود الاختيار من متعدد عليك أن تضغط على الإجابة التي تراها صحيحة؛ من بين البدائل الأربعة المتاحة بمؤشر الفأرة.</li>
+                    <li><strong style="color:#e74c3c;">إذا حصلت في نهاية الاختبار على 90% فأكثر؛ فلست في حاجة لدراسة هذا الموديول، وإذا حصلت على أقل من 90%؛ فابدأ مباشرة في دراسة الموديول التعليمي.</strong></li>
+                </ul>
+            </div>
+            <button class="quiz-submit-btn" style="background: var(--hover-light-blue);" onclick="navigateStep(1)">اضغط لبدء الاختبار 🚀</button>
+        </div>
+
+        <div class="step-container" id="step-5">
+            <h2 class="step-title">الاختبار التحصيلي القبلي</h2>
+            <div id="preTestContainer" class="quiz-box"></div>
+            <button class="quiz-submit-btn" onclick="evaluatePreTest()" id="preTestSubmitBtn">إنهاء الاختبار</button>
+            <div id="preTestResult" class="quiz-result"></div>
+        </div>
+
+        <div class="step-container" id="step-6">
+            <h2 class="step-title">المحتوى التعليمي</h2>
+            <p class="content-text" style="font-weight: 700;">عزيزي الطالب... يشمل محتوى الموديول على المعارف والمهارات الخاصة بتصميم المحتوى التعليمي تطبيقًا على برنامج كانفا Canva، ويمكن عرض تلك العناصر كالتالي:</p>
+            <h3 style="color:var(--primary-navy); margin-top:20px; margin-bottom: 15px; font-size: 20px;">❖ التعريف ببرنامج كانفا Canva:</h3>
+            <div class="wrap-layout">
+                <img src="1000089597.jpg" class="wrap-img-left">
+                <p class="content-text">أصبح توظيف الوسائط المرئية في التعليم ضرورة تفرضها طبيعة التعلم المعاصر في ظل تنوع مصادر المعرفة وتغير خصائص المتعلم واحتياجاته، كما لم تعد فاعلية المحتوى التعليمي مرتبطة بمضمونه فقط، بل باتت تعتمد إلى حد كبير على طريقة تصميمه، فطريقة تصميم المحتوى لها دور كبير في تسهيل الفهم، وتنظيم الأفكار، ومساعدة المتعلم على التركيز والمتابعة، وعندما يُقدَّم المحتوى بشكل واضح وجذاب، يصبح التعلم أكثر سلاسة وأقرب للفهم والتطبيق، ومن هنا تبرز أهمية تعلم مهارات تصميم المحتوى التعليمي باستخدام أدوات بسيطة تساعد المعلم على تحويل المعلومات إلى مواد تعليمية منظمة وواضحة.</p>
+                <p class="content-text">ويعد كانفا Canva من برامج التصميم المستحدثة القائمة على الويب وتطبيقات الأجهزة الذكية التي تتيح إنشاء العروض التقديمية للمحتوى التعليمي، حيث يوفر مجموعة متنوعة من القوالب الجاهزة التي تساعد على تصميم شرائح العرض بصورة منظمة وجذابة، مع أدوات واضحة للتحكم في النصوص والألوان والصور، ويعتمد البرنامج على دمج العناصر المرئية مع المحتوى النصي بشكل متناسق، مما يسهم في تقديم المعلومات بصورة مختصرة وواضحة ويساعد على إيصال الفكرة الأساسية بسرعة دون الاعتماد على الشرح المطول.</p>
+                <p class="content-text">ويعتمد كانفا Canva على مكتبة واسعة من القوالب الجاهزة والعناصر الجرافيكية، مع واجهة استخدام بسيطة تعتمد على السحب والإفلات، بما يمكن غير المتخصصين في التصميم من إنتاج عروض تقديمة ذات جودة عالية، مع إتاحة حفظ التصميمات وتعديلها ومشاركتها، مما يجعله مناسبًا لتوظيفه في إعداد العروض التقديمية والمحتوى التعليمي داخل البيئات التعليمية المختلفة.</p>
+            </div>
+        </div>
+
+        <div class="step-container" id="step-7">
+            <h2 class="step-title">المحتوى التعليمي</h2>
+            <h3 style="color:var(--primary-navy); margin-bottom:20px; font-size: 20px;">❖ مزايا استخدام Canva في إعداد وتصميم العروض التقديمة:</h3>
+            <p class="content-text">يتسم برنامج كانفا Canva بعدد من المميزات التي جعلته من الأدوات الفاعلة في تصميم العروض التقديمية، تتمثل فيما يلي:</p>
+            
+            <ul class="content-list grid-list">
+                <li><strong>بساطة واجهة الاستخدام:</strong> تعد سهولة واجهة الاستخدام من العوامل الرئيسة المميزة لبرنامج Canva في إعداد العروض التقديمية، حيث يعتمد على واجهة تقوم على مبدأ السحب والإفلات، مما يتيح للمعلمين والطلاب – حتى غير المتخصصين في مجال التصميم – إعداد عروض تقديمية ذات جودة عالية دون الحاجة إلى خبرات متقدمة.</li>
+                <li><strong>الدعم الكامل للغة العربية:</strong> يقدم البرنامج دعمًا شاملًا للغة العربية من حيث الواجهة واتجاه الكتابة والخطوط، مما يسهل التنقل والاستخدام بشكل طبيعي وسلس دون أي مشاكل تقنية، بالإضافة إلى ذلك، هناك قوالب مصممة خصيصاً للمحتوى العربي تراعي الخصوصية الثقافية العربية.</li>
+                <li><strong>توافر القوالب الجاهزة:</strong> يوفر برنامج Canva مجموعة متنوعة من القوالب الجاهزة للعروض التقديمية، تتميز بحسن توزيع العناصر وتناسقها داخل الشرائح، ويساعد هذا المستخدم على اختيار عرض يتوافق مع طبيعة المحتوى التعليمي، كما يسهم في تنظيم الأفكار وتسلسلها بطريقة واضحة.</li>
+                <li><strong>تعدد صيغ الحفظ والتصدير:</strong> يوفر كانفا Canva مرونة استثنائية في طريقة عرض وتصدير العروض التقديمية، حيث يمكن تقديم العرض مباشرة باستخدام أدوات تحكم احترافية، مع إمكانية استخدام وضع المقدم الذي يعرض الملاحظات والشريحة التالية، كما تصدير العروض بصيغ متعددة (PPTX - PDF - JPG - PNG - MP4 - GIF) وجميع هذه الصيغ تحافظ على جودة عالية للصور والعناصر.</li>
+                <li><strong>ثراء الموارد البصرية:</strong> يتميز برنامج Canva بتعدد وتنوع العناصر البصرية، من صور وأيقونات وأشكال وخطوط التي يمكن تخصيصها بسهولة، ويساعد هذا التنوع تحويل الأفكار والمفاهيم المجردة إلى تمثيلات بصرية واضحة داخل شرائح العرض.</li>
+                <li><strong>سهولة الوصول والمشاركة:</strong> يتيح Canva مشاركة العروض التقديمية مع الآخرين وإمكانية التعديل المشترك عليها، وهو ما يعزز فاعلية استخدام العروض التقديمية كأداة تعليمية نشطة، وتُعد هذه الميزة ذات أهمية تربوية، حيث تسهم في تشجيع الطلاب على العمل الجماعي.</li>
+                <li><strong>الإتاحة المجانية:</strong> توفر كانفا Canva نسخة Canva for Education مجانية بالكامل للمعلمين والطلاب، وتوفر هذه النسخة جميع ميزات النسخة الاحترافية (Pro) مجاناً، دون أي تكاليف إضافية بما يضمن العدالة في الوصول لجميع المؤسسات التعليمية بغض النظر عن ميزانياتها.</li>
+            </ul>
+            
+            <img src="1000089598.jpg" class="content-image" style="margin-top: 10px;">
+        </div>
+        
+        <div class="step-container" id="step-8"><h2 class="step-title">تقويم ذاتي (1)</h2><div class="quiz-box"><div class="question">1. لا يسمح برنامج Canva بمشاركة العروض مع الآخرين للتعديل عليها.</div><div class="options-group"><input type="radio" name="sa1_q1" id="sa1_q1_t" value="true"><label class="option-label" for="sa1_q1_t">صواب</label><input type="radio" name="sa1_q1" id="sa1_q1_f" value="false"><label class="option-label" for="sa1_q1_f">خطأ</label></div><div class="question">2. يوفر برنامج كانفا قوالب جاهزة لتصميم المحتوى بسهولة.</div><div class="options-group"><input type="radio" name="sa1_q2" id="sa1_q2_t" value="true"><label class="option-label" for="sa1_q2_t">صواب</label><input type="radio" name="sa1_q2" id="sa1_q2_f" value="false"><label class="option-label" for="sa1_q2_f">خطأ</label></div><button class="quiz-submit-btn" onclick="submitSA('sa1', 'false', 'true')">تحقق من الإجابات</button><div id="res_sa1" class="quiz-result"></div></div></div>
+        
+        <div class="step-container" id="step-9"><h2 class="step-title">المحتوى التعليمي</h2><img src="1000089601.jpg" class="content-image"></div>
+        <div class="step-container" id="step-10"><h2 class="step-title">المحتوى التعليمي</h2><img src="1000089824.jpg" class="content-image"></div>
+        
+        <div class="step-container" id="step-11"><h2 class="step-title">تقويم ذاتي (2)</h2><div class="quiz-box"><div class="question">1. لا يمكن تعديل اسم المستخدم في Canva بعد إنشاء الحساب.</div><div class="options-group"><input type="radio" name="sa2_q1" id="sa2_q1_t" value="true"><label class="option-label" for="sa2_q1_t">صواب</label><input type="radio" name="sa2_q1" id="sa2_q1_f" value="false"><label class="option-label" for="sa2_q1_f">خطأ</label></div><div class="question">2. يمكن تغيير لغة واجهة برنامج كانفا من خلال الإعدادات.</div><div class="options-group"><input type="radio" name="sa2_q2" id="sa2_q2_t" value="true"><label class="option-label" for="sa2_q2_t">صواب</label><input type="radio" name="sa2_q2" id="sa2_q2_f" value="false"><label class="option-label" for="sa2_q2_f">خطأ</label></div><button class="quiz-submit-btn" onclick="submitSA('sa2', 'false', 'true')">تحقق من الإجابات</button><div id="res_sa2" class="quiz-result"></div></div></div>
+        
+        <div class="step-container" id="step-12"><h2 class="step-title">المحتوى التعليمي</h2><img src="1000089825.jpg" class="content-image"></div>
+        <div class="step-container" id="step-13"><h2 class="step-title">المحتوى التعليمي</h2><img src="1000089826.jpg" class="content-image"></div>
+        <div class="step-container" id="step-14"><h2 class="step-title">المحتوى التعليمي</h2><img src="1000089827.jpg" class="content-image"></div>
+        <div class="step-container" id="step-15"><h2 class="step-title">المحتوى التعليمي</h2><img src="1000089828.jpg" class="content-image"></div>
+        
+        <div class="step-container" id="step-16"><h2 class="step-title">تقويم ذاتي (3)</h2><div class="quiz-box"><div class="question">1. يؤدي اختيار الأمر Delete page إلى إخفاء الشريحة مؤقتاً.</div><div class="options-group"><input type="radio" name="sa3_q1" id="sa3_q1_t" value="true"><label class="option-label" for="sa3_q1_t">صواب</label><input type="radio" name="sa3_q1" id="sa3_q1_f" value="false"><label class="option-label" for="sa3_q1_f">خطأ</label></div><div class="question">2. يتيح البرنامج حفظ العرض التقديمي بصيغة PowerPoint.</div><div class="options-group"><input type="radio" name="sa3_q2" id="sa3_q2_t" value="true"><label class="option-label" for="sa3_q2_t">صواب</label><input type="radio" name="sa3_q2" id="sa3_q2_f" value="false"><label class="option-label" for="sa3_q2_f">خطأ</label></div><button class="quiz-submit-btn" onclick="submitSA('sa3', 'false', 'true')">تحقق من الإجابات</button><div id="res_sa3" class="quiz-result"></div></div></div>
+        
+        <div class="step-container" id="step-17"><h2 class="step-title">المحتوى التعليمي</h2><img src="1000089833.jpg" class="content-image"></div>
+        <div class="step-container" id="step-18"><h2 class="step-title">المحتوى التعليمي</h2><img src="1000089829.jpg" class="content-image"></div>
+        <div class="step-container" id="step-19"><h2 class="step-title">المحتوى التعليمي</h2><img src="1000089830.jpg" class="content-image"></div>
+        <div class="step-container" id="step-20"><h2 class="step-title">المحتوى التعليمي</h2><img src="1000089831.jpg" class="content-image"></div>
+        <div class="step-container" id="step-21"><h2 class="step-title">المحتوى التعليمي</h2><img src="1000089832.jpg" class="content-image"></div>
+        
+        <div class="step-container" id="step-22"><h2 class="step-title">تقويم ذاتي (4)</h2><div class="quiz-box"><div class="question">1. يمكن التحكم في مدة حركة الانتقال من خلال مؤشر Duration.</div><div class="options-group"><input type="radio" name="sa4_q1" id="sa4_q1_t" value="true"><label class="option-label" for="sa4_q1_t">صواب</label><input type="radio" name="sa4_q1" id="sa4_q1_f" value="false"><label class="option-label" for="sa4_q1_f">خطأ</label></div><div class="question">2. يُستخدم خيار PPTX لتصدير العرض كملف فيديو.</div><div class="options-group"><input type="radio" name="sa4_q2" id="sa4_q2_t" value="true"><label class="option-label" for="sa4_q2_t">صواب</label><input type="radio" name="sa4_q2" id="sa4_q2_f" value="false"><label class="option-label" for="sa4_q2_f">خطأ</label></div><button class="quiz-submit-btn" onclick="submitSA('sa4', 'true', 'false')">تحقق من الإجابات</button><div id="res_sa4" class="quiz-result"></div></div></div>
+
+        <div class="step-container" id="step-23">
+            <h2 class="step-title">النشاط التدريبي</h2>
+            <div class="split-layout">
+                <div class="text-side">
+                    <p class="content-text"><strong>عزيزي المتعلم..</strong> تفاعل مع النظام الذكي من خلال اختيار الكلمات المفتاحية الفعلية لتصميم عرض تعليمي، ثم في ضوء تلك الاستجابات المعروضة قم بتنفيذ المهمة الآتية:</p>
+                    <div style="background:#f0f4f8; padding:20px; border-right:5px solid var(--hover-light-blue); border-radius:8px; margin-top:20px;">
+                        <h4 style="color:var(--primary-navy); margin-bottom:10px;">🎯 المطلوب:</h4>
+                        <p style="margin:0; font-weight:700;">أنشئ عرضًا مرتبطًا بتخصصك يتضمن خمس شرائح منظمة وعناصر مرئية ونصوصًا منسقة وانتقالات، ثم شارك رابطه مع معلمك.</p>
+                    </div>
+                    <a href="https://www.canva.com" target="_blank" class="action-btn canva-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> تطبيق عملي على Canva ↗</a>
+                </div>
+                
+                <div class="img-side">
+                    <div class="chat-container">
+                        <div class="chat-header"><i class="fa-solid fa-robot" style="font-size:20px;"></i> المحادثة الذكية لـ Canva</div>
+                        
+                        <div class="chat-fixed-top">
+                            <div class="chat-welcome-box">أهلاً بك في المحادثة الذكية الخاصة بموديول كانفا، إيه اللي حابب تسأل وتستفسر عنه عشان ننجز النشاط مع بعض؟</div>
+                        </div>
+
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="chat-suggestions" id="chatSuggestions"></div>
+                        </div>
+
+                        <div class="chat-input-area">
+                            <input type="text" id="chatInput" placeholder="اكتب سؤالك هنا..." onkeypress="handleChatKey(event)">
+                            <button onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-container" id="step-24">
+            <h2 class="step-title">المهمة الأدائية البعدية</h2>
+            <div class="task-instructions">
+                <h3>⛔ تعليمات أداء المهمة البعدية:</h3>
+                <p class="content-text">عزيزي المتعلم...بعد الانتهاء من دراسة هذا الموديول، يُطلب منك تنفيذ المهمة الآتية في ضوء ما اكتسبته من معارف ومهارات، وذلك بهدف قياس مستوى تطور أدائك بعد الدراسة، يرجى مراعاة التعليمات الآتية:</p>
+                <ul class="content-list">
+                    <li>تنفيذ المهمة بصورة فردية.</li>
+                    <li>توظيف المهارات المكتسبة بصورة متكاملة أثناء التنفيذ.</li>
+                    <li>الالتزام بمتطلبات الأداء المحددة في نص المهمة.</li>
+                    <li>استيفاء جميع عناصر الأداء قبل التسليم.</li>
+                    <li>رفع ناتج الأداء النهائي في المكان المخصص داخل البيئة التعليمية.</li>
+                </ul>
+            </div>
+            <img src="1000090313.jpg" class="content-image">
+            <a href="https://www.canva.com" target="_blank" class="action-btn canva-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> تطبيق عملي على Canva ↗</a>
+            
+            <div class="submission-area">
+                <span class="submission-text">شارك رابط المهمة لمعلمك هنا ⬅️</span>
+                <a href="https://wa.me/qr/D2OMSRXECH7UE1" target="_blank" class="action-btn whatsapp-btn"><i class="fa-brands fa-whatsapp"></i> إرسال عبر الواتساب</a>
+            </div>
+        </div>
+
+        <div class="step-container" id="step-25">
+            <h2 class="step-title">تعليمات الاختبار البعدي</h2>
+            <div class="quiz-box">
+                <h3 style="color: var(--primary-navy); margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px;">🎯 هدف الاختبار:</h3>
+                <p class="content-text">هذا الاختبار وضع لقياس مدى تحصيلك في الجوانب المعرفية المرتبطة بمهارات تصميم المحتوى التعليمي تطبيقًا على برنامج كانفا Canva.</p>
+                
+                <h3 style="color: var(--primary-navy); margin-bottom: 15px; margin-top: 25px; border-bottom: 2px solid #eee; padding-bottom: 10px;">📝 تعليمات الاختبار:</h3>
+                <p class="content-text">من فضلك عزيزي الطالب اقرأ التعليمات التالية بعناية والاسترشاد بها قبل أن تبدأ في إجابة الاختبار:</p>
+                <ul class="content-list">
+                    <li>يتكون هذا الاختبار من جزئين، يشتمل الجزء الأول على عبارات من نوع الصواب والخطأ، ويشتمل الجزء الثانى على بنود من نوع الاختيار من متعدد.</li>
+                    <li>عند الإجابة عن أسئلة الصواب والخطأ سوف تجد أسفل كل سؤال علامتان، إحداهما صواب والأخرى خطأ، وعليك أن تضغط على العلامة الصحيحة باستخدام مؤشر الفأرة، والنقر على السؤال التالي.</li>
+                    <li>عند الإجابة عن بنود الاختيار من متعدد عليك أن تضغط على الإجابة التي تراها صحيحة؛ من بين البدائل الأربعة المتاحة بمؤشر الفأرة.</li>
+                    <li><strong style="color:#e74c3c;">إذا حصلت في نهاية الاختبار على 90% فأكثر؛ فلست في حاجة لدراسة هذا الموديول، وإذا حصلت على أقل من 90%؛ فابدأ مباشرة في دراسة الموديول التعليمي.</strong></li>
+                </ul>
+            </div>
+            <button class="quiz-submit-btn" style="background: var(--hover-light-blue);" onclick="navigateStep(1)">اضغط لبدء الاختبار 🚀</button>
+        </div>
+
+        <div class="step-container" id="step-26">
+            <h2 class="step-title">الاختبار التحصيلي البعدي</h2>
+            <div id="postTestContainer" class="quiz-box"></div>
+            <button class="quiz-submit-btn" onclick="evaluatePostTest()" id="postTestSubmitBtn">إرسال الإجابات النهائية</button>
+            <div id="postTestResult" class="quiz-result"></div>
+        </div>
+
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-btn prev-btn" id="prevBtn" onclick="navigateStep(-1)"><i class="fa-solid fa-arrow-right"></i> السابق</button>
+        <button class="nav-btn next-btn" id="nextBtn" onclick="navigateStep(1)">التالي <i class="fa-solid fa-arrow-left"></i></button>
+    </div>
+
+    <script>
+        let currentUser = localStorage.getItem("currentUser") || "يوسف";
+        const totalSteps = 26; 
+        let highestStep = parseInt(localStorage.getItem(currentUser + "_mod1_highestStep")) || 1;
+        let currentStep = 1;
+
+        const quizSteps = [8, 11, 16, 22];
+
+        const urlParams = new URLSearchParams(window.location.search);
+        let stepParam = parseInt(urlParams.get('step'));
+        if (stepParam && stepParam <= highestStep) { currentStep = stepParam; } 
+        else if (stepParam && stepParam > highestStep) { currentStep = highestStep; }
+
+        // ================= الشات بوت المحدث بالردود الأكاديمية =================
+        const botKnowledge = [
+            { 
+                keywords: ["ما هو", "ماهو", "canva", "كانفا"], 
+                reply: "Canva هو برنامج تصميم قائم على الويب يتيح إنشاء عروض تقديمية ومحتوى بصري من خلال واجهة استخدام بسيطة. عند الدخول إلى المنصة تظهر أدوات رئيسية في الشريط الجانبي مثل Create لإنشاء تصميم جديد، و Text لإضافة النصوص، و Elements لإدراج الصور والرسومات، بينما تتم عملية التصميم داخل مساحة الشريحة باستخدام السحب والإفلات، كما يوفر شريط الأدوات العلوي خيارات تنسيق الخطوط والألوان والمحاذاة، مما يسمح ببناء محتوى منظم داخل بيئة عمل تفاعلية وسهلة الاستخدام." 
+            },
+            { 
+                keywords: ["تسجيل الدخول", "تسجيل", "login"], 
+                reply: "للبدء في استخدام Canva يتم فتح أحد متصفحات الإنترنت وكتابة عنوان الموقع www.canva.com من الصفحة الرئيسية بعد ذلك يتم اختيار تسجيل الدخول باستخدام حساب Gmail، وإدخال البريد الإلكتروني ثم الضغط على Next، وكتابة كلمة المرور والضغط مرة أخرى على Next، ثم اختيار Connect لاستكمال عملية الدخول والوصول إلى واجهة العمل الخاصة بالحساب." 
+            },
+            { 
+                keywords: ["إعدادات الحساب", "إعدادات", "settings"], 
+                reply: "بعد تسجيل الدخول يمكن تخصيص الحساب بالنقر على صورة الحساب ثم اختيار Settings. من صفحة الإعدادات يمكن الضغط على Upload photo لرفع صورة شخصية، أو اختيار Edit بجوار Name لتعديل الاسم ثم الضغط على Save لحفظ التغييرات، كما يمكن تغيير لغة الواجهة من خلال خيار Language واختيار اللغة المناسبة ليتم تطبيقها مباشرة على بيئة العمل." 
+            },
+            { 
+                keywords: ["إنشاء عرض", "جديد", "عرض", "create"], 
+                reply: "بعد تسجيل الدخول إلى Canva انتقل إلى الواجهة الرئيسية ثم انقر على زر Create من القائمة الجانبية واختر Presentation من أنواع التصميمات المتاحة لفتح ملف عرض جديد، بعد فتحه مباشرة توجّه إلى خانة Untitled design – Presentation وعدّل الاسم إلى عنوان يعبر عن موضوع عرضك التعليمي." 
+            },
+            { 
+                keywords: ["كيف أرتب", "ترتيب", "شرائح"], 
+                reply: "من الشريط السفلي الذي يعرض مصغرات الشرائح انقر بزر الفأرة الأيمن على الشريحة لاستخدام خيارات Add Page لإضافة شريحة جديدة أو Duplicate page لتكرار شريحة مع الحفاظ على تنسيقها أو Delete page لحذف غير الضروري، يمكنك أيضًا استخدام Copy page style للحفاظ على نمط موحد، أو Hide page لإخفاء شريحة أثناء العرض دون حذفها، احرص على ترتيب الشرائح لأن ترتيب الشرائح يؤثر مباشرة في وضوح الرسالة التعليمية." 
+            },
+            { 
+                keywords: ["كيف أضيف صور", "صور", "رسومات", "عناصر"], 
+                reply: "من الشريط الجانبي اختر Elements ثم اكتب كلمة مفتاحية تعبر عن موضوع الشريحة داخل مربع البحث واضغط Enter، وبعد ظهور النتائج اختر الفئة المناسبة مثل Graphics أو Photos أو Videos. عند إدراج العنصر داخل الشريحة استخدم أدوات السحب والتكبير لتعديل حجمه ومكانه بما يتناسق مع النص المعروض، وراعِ أن يخدم العنصر الفكرة الأساسية دون ازدحام بصري حتى يعزز الفهم بدلاً من تشتيته." 
+            },
+            { 
+                keywords: ["إدراج نصوص", "نصوص", "تنسيق", "خطوط"], 
+                reply: "لإضافة نص جديد انقر على Text ثم اختر Add a text box واكتب المحتوى المطلوب داخل مربع النص. بعد تحديده استخدم شريط التنسيق العلوي لتعديل نوع الخط أو حجمه أو لونه أو محاذاته بما يتناسب مع طبيعة العرض، مع الحفاظ على توحيد نمط العناوين والخطوط عبر جميع الشرائح لضمان اتساق بصري يعكس احترافية التصميم ويجعل القراءة أكثر وضوحًا." 
+            },
+            { 
+                keywords: ["الانتقالات", "الحركات", "حركة"], 
+                reply: "لإضافة انتقال بين الشرائح انقر بزر الفأرة الأيمن على الشريحة واختر Add Transition ثم حدد النمط المناسب واضبط المدة من Duration والاتجاه من Direction بما يتلاءم مع طبيعة العرض. وإذا رغبت في إبراز عنصر داخل الشريحة حدده أولاً ثم اختر Animate من الشريط العلوي وحدد نمط الحركة وسرعتها من Speed مع مراعاة الاعتدال في الاستخدام حتى تبقى الأولوية لوضوح المحتوى لا للمؤثرات البصرية." 
+            },
+            { 
+                keywords: ["حفظ ومشاركة", "حفظ", "مشاركة", "share", "download"], 
+                reply: "بعد مراجعة ترتيب الشرائح وضبط العناصر والانتقالات انقر على Share أعلى الواجهة للحصول على رابط المشاركة وحدد مستوى الصلاحية المناسب سواء بالمشاهدة فقط أو بالتعديل حسب المطلوب. وإذا احتجت إلى ملف مستقل اختر Download وحدد الصيغة المناسبة مثل PDF أو PPTX ثم احفظ الملف على جهازك. بعد ذلك انسخ الرابط أو أرسل الملف لمعلمك لضمان الاطلاع على النسخة الصحيحة من عملك." 
+            }
+        ];
+
+        const quickReplies = [
+            "ما هو Canva؟", "تسجيل الدخول إلى Canva", "ضبط إعدادات الحساب", 
+            "إنشاء عرض جديد", "كيف أرتب شرائح العرض؟", "كيف أضيف صورًا أو رسومات؟", 
+            "إدراج نصوص وتنسيقها", "الانتقالات والحركات داخل الشريحة", "حفظ ومشاركة العرض"
+        ];
+
+        function initChatbot() {
+            let suggContainer = document.getElementById("chatSuggestions");
+            if(suggContainer.children.length > 0) return;
+            suggContainer.innerHTML = "";
+            quickReplies.forEach(txt => {
+                let btn = document.createElement("button");
+                btn.className = "sugg-btn";
+                btn.innerText = txt;
+                btn.onclick = () => { sendChatMessage(txt); };
+                suggContainer.appendChild(btn);
+            });
+        }
+
+        function handleChatKey(e) { if(e.key === 'Enter') sendChatMessage(); }
+
+        function sendChatMessage(textOverride = null) {
+            let inputField = document.getElementById("chatInput");
+            let userText = textOverride || inputField.value.trim();
+            if(!userText) return;
+            
+            appendMessage("user-msg", userText);
+            inputField.value = "";
+            let chatBox = document.getElementById("chatMessages");
+            
+            setTimeout(() => {
+                let botReply = getSmartReply(userText);
+                appendMessage("bot-msg", botReply);
+            }, 800);
+        }
+
+        function appendMessage(className, text) {
+            let chatBox = document.getElementById("chatMessages");
+            let msgDiv = document.createElement("div");
+            msgDiv.className = `msg-bubble ${className}`;
+            msgDiv.innerText = text;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function getSmartReply(text) {
+            let lowerText = text.toLowerCase();
+            for (let item of botKnowledge) {
+                if (item.keywords.some(kw => lowerText.includes(kw.toLowerCase()))) return item.reply;
+            }
+            return "اختر من الكلمات المفتاحية السابقة.";
+        }
+
+        // ================= بنك الأسئلة الموحد (15 سؤال: 10 صواب وخطأ + 5 اختياري) =================
+        const unifiedQuestions = [
+            { q: "يُعد برنامج Canva من برامج التصميم القائمة على الويب.", type: "tf", ans: "true" },
+            { q: "لإضافة حركة داخل الشريحة يتم النقر على Autoplay من شريط الأدوات العلوي.", type: "tf", ans: "false" },
+            { q: "تقتصر فاعلية المحتوى التعليمي على دقة المعلومات دون الاهتمام بطريقة تصميمها.", type: "tf", ans: "false" },
+            { q: "يعتمد برنامج Canva على واجهة استخدام تقوم على مبدأ السحب والإفلات.", type: "tf", ans: "true" },
+            { q: "تُطبق حركات الانتقال في كانفا على العناصر داخل الشريحة وليس على الشريحة نفسها.", type: "tf", ans: "false" },
+            { q: "يتيح برنامج Canva حفظ العرض التقديمي بصيغة PowerPoint قابلة للتعديل.", type: "tf", ans: "true" },
+            { q: "تستخدم خاصية Present full screen لتشغيل العرض التقديمي تلقائيا دون تدخل يدوي.", type: "tf", ans: "false" },
+            { q: "تتيح نسخة Canva for Education مزايا تعليمية مجانية.", type: "tf", ans: "true" },
+            { q: "يتم تحديد اتجاه حركة لعنصر من خلال أوامر Direction في قائمة Animate.", type: "tf", ans: "true" },
+            { q: "لا يمكن تغيير الاسم الافتراضي للعرض التقديمي بعد إنشائه.", type: "tf", ans: "false" },
+            
+            { q: "يعتمد برنامج Canva في تصميم العروض التقديمية على:", type: "mcq", opts: ["الأوامر النصية.", "النمذجة الثلاثية.", "السحب والإفلات.", "لغات البرمجة."], ans: "السحب والإفلات." },
+            { q: "يستخدم زر Create في واجهة Canva من أجل:", type: "mcq", opts: ["حفظ العرض التقديمي.", "إنشاء تصميم جديد.", "مشاركة العرض مع الآخرين.", "حذف التصميم الحالي."], ans: "إنشاء تصميم جديد." },
+            { q: "يتم إدراج مربع نص جديد داخل الشريحة من خلال قائمة:", type: "mcq", opts: ["File.", "Elements.", "Share.", "Text."], ans: "Text." },
+            { q: "في حال أراد المعلم إضافة حركة انتقالية بين شريحتين متتاليتين، فإنه يستخدم:", type: "mcq", opts: ["Add Transition.", "Elements.", "Animate.", "Background."], ans: "Add Transition." },
+            { q: "تسمح الصلاحية Can edit للمشارك في العرض التقديمي بـ:", type: "mcq", opts: ["المشاهدة.", "التعليق.", "التعديل.", "التنزيل."], ans: "التعديل." }
+        ];
+
+        function getShuffledQuestions() {
+            let tfQuestions = unifiedQuestions.filter(q => q.type === 'tf');
+            let mcqQuestions = unifiedQuestions.filter(q => q.type === 'mcq');
+            
+            for (let i = tfQuestions.length - 1; i > 0; i--) { 
+                const j = Math.floor(Math.random() * (i + 1)); 
+                [tfQuestions[i], tfQuestions[j]] = [tfQuestions[j], tfQuestions[i]]; 
+            }
+            
+            for (let i = mcqQuestions.length - 1; i > 0; i--) { 
+                const j = Math.floor(Math.random() * (i + 1)); 
+                [mcqQuestions[i], mcqQuestions[j]] = [mcqQuestions[j], mcqQuestions[i]]; 
+            }
+            
+            return [...tfQuestions, ...mcqQuestions];
+        }
+
+        function shuffleOptions(array) { 
+            for (let i = array.length - 1; i > 0; i--) { 
+                const j = Math.floor(Math.random() * (i + 1)); 
+                [array[i], array[j]] = [array[j], array[i]]; 
+            } 
+        }
+
+        function renderTest(containerId, questionsArray, prefix) {
+            let container = document.getElementById(containerId);
+            container.innerHTML = "";
+            
+            let tfHtml = `<h3 style="color: var(--primary-navy); margin: 0 0 15px; border-bottom: 2px solid #eee; padding-bottom: 10px; font-size: 20px;">أولاً: عبارات الصواب والخطأ</h3>`;
+            let mcqHtml = `<h3 style="color: var(--primary-navy); margin: 35px 0 15px; border-bottom: 2px solid #eee; padding-bottom: 10px; font-size: 20px;">ثانياً: أسئلة الاختيار من متعدد</h3>`;
+            
+            let tfCount = 1;
+            let mcqCount = 1;
+
+            questionsArray.forEach((item, index) => {
+                let qNumber = item.type === 'tf' ? tfCount++ : mcqCount++;
+                let qHtml = `<div class="question" data-original-q="${item.q}">${qNumber}. ${item.q}</div>`;
+                let optGroup = `<div class="options-group ${item.type === 'mcq' ? 'mcq' : ''}">`;
+                let options = item.type === "tf" ? [{l:"صواب", v:"true"}, {l:"خطأ", v:"false"}] : item.opts.map(o => ({l:o, v:o}));
+                
+                if (item.type === "mcq") shuffleOptions(options);
+                
+                options.forEach(opt => {
+                    let id = `${prefix}_q${index}_${Math.random().toString(36).substr(2, 5)}`;
+                    optGroup += `<input type="radio" name="${prefix}_q${index}" id="${id}" value="${opt.v}"><label class="option-label" for="${id}">${opt.l}</label>`;
+                });
+                optGroup += `</div>`;
+                
+                if (item.type === 'tf') tfHtml += qHtml + optGroup;
+                else mcqHtml += qHtml + optGroup;
+            });
+            
+            container.innerHTML = tfHtml + mcqHtml;
+        }
+
+        function updateUI() {
+            document.querySelectorAll('.step-container').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            
+            document.getElementById('progressFill').style.width = `${(currentStep / totalSteps) * 100}%`;
+            
+            let prevBtn = document.getElementById('prevBtn');
+            prevBtn.style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+            
+            let nextBtn = document.getElementById('nextBtn');
+            nextBtn.className = 'nav-btn next-btn'; 
+            nextBtn.style.display = 'flex'; 
+            nextBtn.innerHTML = `التالي <i class="fa-solid fa-arrow-left"></i>`;
+
+            if (quizSteps.includes(currentStep)) {
+                let prefix = currentStep === 8 ? 'sa1' : currentStep === 11 ? 'sa2' : currentStep === 16 ? 'sa3' : 'sa4';
+                let isSolved = localStorage.getItem(currentUser + "_mod1_quiz_" + currentStep) === "true";
+                
+                if (!isSolved) { 
+                    document.querySelectorAll(`input[name^="${prefix}"]`).forEach(el => el.checked = false);
+                    let resBox = document.getElementById(`res_${prefix}`);
+                    if(resBox) { resBox.style.display = 'none'; resBox.className = 'quiz-result'; resBox.innerHTML = ''; }
+                    nextBtn.classList.add('disabled'); 
+                    nextBtn.innerHTML = `<i class="fa-solid fa-lock"></i> أجب أولاً`; 
+                }
+            } 
+            else if (currentStep === 5) {
+                let isDone = localStorage.getItem(currentUser + "_mod1_preTest") === "true";
+                if(!isDone) { nextBtn.classList.add('disabled'); nextBtn.innerHTML = `<i class="fa-solid fa-lock"></i> أتمم الاختبار`; } 
+                else { 
+                    let perc = parseFloat(localStorage.getItem(currentUser + "_preTestScore")) || 0;
+                    if(perc >= 90) { nextBtn.innerHTML = "العودة للقائمة"; nextBtn.onclick = () => { window.location.href = "home.html"; }; }
+                }
+                if(!document.getElementById("preTestContainer").innerHTML) renderTest("preTestContainer", unifiedQuestions, "pre");
+            } 
+            else if (currentStep === 26) {
+                let isDone = localStorage.getItem(currentUser + "_mod1_postTest") === "true";
+                let passed = localStorage.getItem(currentUser + "_mod1_postPassed") === "true";
+                if(!isDone) { nextBtn.classList.add('disabled'); nextBtn.innerHTML = `<i class="fa-solid fa-lock"></i> أتمم الاختبار`; } 
+                else if (!passed) { nextBtn.className = 'nav-btn next-btn restart-btn'; nextBtn.innerHTML = `إعادة الموديول 🔄`; } 
+                else { nextBtn.innerHTML = `العودة للقائمة <i class="fa-solid fa-check"></i>`; nextBtn.style.background = "#2ecc71";}
+                
+                if(!document.getElementById("postTestContainer").innerHTML) {
+                    let shuffled = getShuffledQuestions();
+                    renderTest("postTestContainer", shuffled, "post");
+                }
+            } 
+            else if (currentStep === 4 || currentStep === 25) {
+                nextBtn.style.display = "none"; 
+            }
+
+            if(currentStep === 23) initChatbot();
+        }
+
+        function navigateStep(direction) {
+            let nextBtn = document.getElementById('nextBtn');
+            if (direction === 1 && nextBtn.classList.contains('disabled')) return alert("الرجاء الإجابة بشكل صحيح أو إتمام المهمة أولاً.");
+
+            if (direction === 1 && nextBtn.classList.contains('restart-btn')) {
+                currentStep = 1; localStorage.setItem(currentUser + "_mod1_postTest", "false"); 
+                document.getElementById("postTestContainer").innerHTML = ""; document.getElementById("postTestResult").style.display = "none";
+                document.getElementById("postTestSubmitBtn").style.display = "block"; updateUI(); window.scrollTo({top:0, behavior:'smooth'}); return;
+            }
+            if (direction === 1 && currentStep === totalSteps) { localStorage.setItem(currentUser + "_unlockedModule", 2); window.location.href = "home.html"; return; }
+            
+            currentStep += direction;
+            if (currentStep > highestStep) { highestStep = currentStep; localStorage.setItem(currentUser + "_mod1_highestStep", highestStep); }
+            updateUI(); window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function submitSA(prefix, ans1, ans2) {
+            let q1 = document.querySelector(`input[name="${prefix}_q1"]:checked`);
+            let q2 = document.querySelector(`input[name="${prefix}_q2"]:checked`);
+            if (!q1 || !q2) return alert("الرجاء الإجابة على جميع الأسئلة.");
+            
+            let score = (q1.value === ans1 ? 1 : 0) + (q2.value === ans2 ? 1 : 0);
+            let resBox = document.getElementById(`res_${prefix}`); 
+            resBox.style.display = "block";
+            
+            if (score === 2) { 
+                resBox.className = "quiz-result result-success"; 
+                resBox.innerHTML = "✅ ممتاز! إجاباتك صحيحة."; 
+                localStorage.setItem(currentUser + "_mod1_quiz_" + currentStep, "true"); 
+            } else if (score === 1) { 
+                resBox.className = "quiz-result result-partial"; 
+                resBox.innerHTML = "⚠️ لديك إجابة صحيحة وإجابة خاطئة، ركز أكثر."; 
+                localStorage.setItem(currentUser + "_mod1_quiz_" + currentStep, "true"); 
+            } else { 
+                resBox.className = "quiz-result result-error"; 
+                resBox.innerHTML = "❌ إجاباتك خطأ، راجع المحتوى مرة أخرى."; 
+                localStorage.setItem(currentUser + "_mod1_quiz_" + currentStep, "false"); 
+            }
+            updateUI(); 
+        }
+
+        function evaluatePreTest() {
+            let score = 0; let missed = false;
+            let totalCorrect = 0; let totalWrong = 0;
+            
+            unifiedQuestions.forEach((item, index) => {
+                let ans = document.querySelector(`input[name="pre_q${index}"]:checked`);
+                if(!ans) missed = true; 
+                else if (ans.value === item.ans) { score++; totalCorrect++; }
+                else { totalWrong++; }
+            });
+            
+            if(missed) return alert("أجب على جميع الأسئلة.");
+            let perc = (score / 15) * 100; 
+            
+            localStorage.setItem(currentUser + "_preTestScore", perc);
+            localStorage.setItem(currentUser + "_preTestCorrect", totalCorrect);
+            localStorage.setItem(currentUser + "_preTestWrong", totalWrong);
+            localStorage.setItem(currentUser + "_mod1_preTest", "true");
+            
+            let resBox = document.getElementById("preTestResult"); resBox.style.display = "block";
+            if (perc >= 90) {
+                resBox.className = "quiz-result result-success"; resBox.innerHTML = `🏆 نتيجتك: ${Math.round(perc)}%<br>معفى من الموديول. يمكنك العودة للقائمة.`;
+                localStorage.setItem(currentUser + "_unlockedModule", 2);
+            } else {
+                resBox.className = "quiz-result result-partial"; resBox.innerHTML = `نتيجتك: ${Math.round(perc)}%<br>تحتاج للدراسة. اضغط التالي للمتابعة.`;
+            }
+            document.getElementById("preTestSubmitBtn").style.display = "none"; 
+            updateUI(); 
+        }
+
+        function evaluatePostTest() {
+            let score = 0; let missed = false;
+            
+            let domQuestions = document.querySelectorAll('#postTestContainer .options-group');
+            domQuestions.forEach((group, index) => {
+                let ans = document.querySelector(`input[name="post_q${index}"]:checked`);
+                if(!ans) missed = true; 
+                else {
+                    let qText = group.previousElementSibling.getAttribute('data-original-q');
+                    let originalItem = unifiedQuestions.find(i => i.q === qText);
+                    if (originalItem && ans.value === originalItem.ans) score++;
+                }
+            });
+            
+            if(missed) return alert("أجب على كافة الأسئلة.");
+            let perc = (score / 15) * 100; 
+            let resBox = document.getElementById("postTestResult"); resBox.style.display = "block";
+            localStorage.setItem(currentUser + "_mod1_postTest", "true");
+            
+            if (perc >= 90) { 
+                localStorage.setItem(currentUser + "_mod1_postPassed", "true"); 
+                localStorage.setItem(currentUser + "_unlockedModule", 2); // 🎯 هنا السطر السحري
+                resBox.className = "quiz-result result-success"; 
+                resBox.innerHTML = `🏆 عظيم! نتيجتك: ${Math.round(perc)}%<br>اجتزت الموديول بنجاح.`; 
+            } else { 
+                localStorage.setItem(currentUser + "_mod1_postPassed", "false"); 
+                resBox.className = "quiz-result result-error"; 
+                resBox.innerHTML = `⚠️ نتيجتك: ${Math.round(perc)}%<br>يجب الإعادة من البداية.`; 
+            }
+            document.getElementById("postTestSubmitBtn").style.display = "none"; 
+            updateUI(); 
+        }
+
+        window.onload = updateUI;
+    </script>
+</body>
+</html>

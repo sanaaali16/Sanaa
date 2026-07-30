@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عن البيئة - بيئة تنمية مهارات التحول الرقمي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Cairo', sans-serif; background-color: #f4f7fa; overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* ================= الشريط العلوي ================= */
+        .top-header { background-color: #ffffff; color: #1a2b4c; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: relative; z-index: 1002; }
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .menu-btn { font-size: 24px; cursor: pointer; transition: 0.2s; color: #1a2b4c; }
+        .menu-btn:hover { color: #5b8ee5; }
+        .brand-title { font-weight: 900; font-size: 22px; }
+        .brand-title span { background: #eef2f5; color: #5b8ee5; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; }
+        .logout-btn { background-color: #e74c3c; color: white; border: none; padding: 8px 20px; border-radius: 6px; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .logout-btn:hover { background-color: #c0392b; }
+
+        /* ================= شريط القوائم الأساسي ================= */
+        .main-nav { background-color: #1a2b4c; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 0 20px; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: center; }
+        .nav-list { list-style: none; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; padding: 5px 0; }
+        .nav-list > li { position: relative; }
+        .nav-list > li > a { display: flex; align-items: center; gap: 8px; padding: 14px 18px; color: white; text-decoration: none; font-weight: 700; font-size: 15px; cursor: pointer; border-radius: 8px; transition: 0.3s; }
+        .nav-list > li > a i { color: #5b8ee5; font-size: 16px; }
+        .nav-list > li > a:hover, .nav-list > li > a.active { background-color: #2980b9; }
+        .nav-list > li > a:hover i, .nav-list > li > a.active i { color: white; }
+
+        .dropdown { position: absolute; top: 100%; right: 0; background-color: white; min-width: 230px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-radius: 8px; border-top: 4px solid #5b8ee5; display: none; flex-direction: column; overflow: hidden; z-index: 1001; margin-top: 5px; }
+        .has-dropdown:hover .dropdown { display: flex; }
+        .dropdown a { padding: 12px 20px; color: #1a2b4c; text-decoration: none; font-size: 14px; font-weight: 700; border-bottom: 1px solid #f1f1f1; transition: 0.2s; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .dropdown a i { color: #5b8ee5; }
+        .dropdown a:hover { background-color: #f4f7fa; color: #5b8ee5; padding-right: 25px; }
+
+        /* ================= القوائم الجانبية ================= */
+        .sidebar { position: fixed; top: 0; right: -320px; width: 300px; height: 100vh; background: #1a2b4c; box-shadow: -5px 0 25px rgba(0,0,0,0.2); transition: 0.3s; z-index: 1005; padding-top: 20px; display: flex; flex-direction: column; color: white; }
+        .sidebar.active { right: 0; }
+        .sidebar-header { padding: 20px 25px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; background-color: #121e36; }
+        .sidebar-header h3 { color: white; font-size: 18px; font-weight: 900; }
+        .close-sidebar { font-size: 22px; color: rgba(255,255,255,0.6); cursor: pointer; transition: 0.2s; }
+        .close-sidebar:hover { color: #e74c3c; transform: rotate(90deg); }
+        .sidebar ul { list-style: none; padding: 0; margin-top: 15px; }
+        .sidebar ul li a { display: flex; align-items: center; gap: 12px; padding: 15px 25px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 15px; font-weight: 700; transition: 0.3s; border-right: 4px solid transparent; cursor: pointer; }
+        .sidebar ul li a i { font-size: 18px; width: 25px; text-align: center; color: #5b8ee5; }
+        .sidebar ul li a:hover, .sidebar ul li a.active { background-color: rgba(91, 142, 229, 0.15); color: white; border-right: 4px solid #5b8ee5; padding-right: 35px; }
+        
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1004; display: none; backdrop-filter: blur(2px); }
+        .overlay.active { display: block; }
+
+        /* ================= منطقة "عن البيئة" ================= */
+        .main-content { flex: 1; padding: 40px 20px; max-width: 1100px; margin: 0 auto; width: 100%; animation: fadeIn 0.5s; }
+        
+        .page-title { text-align: center; color: #1a2b4c; font-size: 28px; font-weight: 900; margin-bottom: 30px; border-bottom: 3px solid #eef2f5; padding-bottom: 15px; display: inline-block; width: 100%; }
+
+        /* الكارت الترحيبي */
+        .intro-card { background: white; border-radius: 16px; padding: 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.03); border: 1px solid #eef2f5; margin-bottom: 40px; display: flex; align-items: center; gap: 30px; flex-wrap: wrap; }
+        .intro-icon { flex-shrink: 0; width: 100px; height: 100px; background: linear-gradient(135deg, #1a2b4c, #5b8ee5); color: white; border-radius: 20px; display: flex; justify-content: center; align-items: center; font-size: 45px; box-shadow: 0 10px 20px rgba(91, 142, 229, 0.2); }
+        .intro-text { flex: 1; min-width: 300px; }
+        .intro-text h2 { font-size: 24px; font-weight: 900; color: #1a2b4c; margin-bottom: 15px; }
+        .intro-text p { font-size: 16px; font-weight: 600; color: #444; line-height: 1.9; margin-bottom: 10px; text-align: justify; }
+
+        /* شبكة الموديولات */
+        .modules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        
+        .module-item { background: white; border-radius: 12px; padding: 25px; display: flex; align-items: flex-start; gap: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid #eef2f5; transition: 0.3s; position: relative; overflow: hidden; }
+        .module-item:hover { transform: translateY(-5px); border-color: #5b8ee5; box-shadow: 0 8px 25px rgba(91, 142, 229, 0.1); }
+        .module-item::before { content: ""; position: absolute; right: 0; top: 0; height: 100%; width: 4px; background: #5b8ee5; border-radius: 0 12px 12px 0; transition: width 0.3s ease; }
+        .module-item:hover::before { width: 8px; }
+
+        .mod-icon { width: 60px; height: 60px; background: #f4f7fa; color: #5b8ee5; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 28px; flex-shrink: 0; transition: 0.3s; }
+        .module-item:hover .mod-icon { background: #5b8ee5; color: white; transform: rotate(-5deg) scale(1.05); }
+
+        .mod-details h4 { font-size: 18px; font-weight: 900; color: #1a2b4c; margin-bottom: 8px; }
+        .mod-details p { font-size: 15px; color: #7f8c8d; font-weight: 600; line-height: 1.6; margin: 0; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .footer { text-align: center; padding: 25px; background-color: #1a2b4c; color: white; font-size: 14px; font-weight: 700; margin-top: auto; }
+
+        @media(max-width: 768px) {
+            .intro-card { text-align: center; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+        // البوابات الأمنية للهوم
+        let currentUser = localStorage.getItem("currentUser");
+        if (!currentUser) { 
+            window.location.href = "index.html"; 
+        }
+    </script>
+
+    <div class="top-header">
+        <div class="header-right">
+            <div class="menu-btn" onclick="toggleSidebar('userSidebar')"><i class="fa-solid fa-bars"></i></div>
+            <div class="brand-title">بيئة تنمية مهارات التحول الرقمي <span>Beta</span></div>
+        </div>
+        <button class="logout-btn" onclick="logout()">تسجيل خروج <i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+    </div>
+
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li><a href="home.html"><i class="fa-solid fa-house"></i> الرئيسية</a></li>
+            <li><a href="guide.html"><i class="fa-solid fa-book"></i> دليل الطالب</a></li>
+            <li><a href="objectives.html"><i class="fa-solid fa-bullseye"></i> الأهداف العامة</a></li>
+            
+            <li class="has-dropdown">
+                <a><i class="fa-solid fa-file-pen"></i> أدوات القياس القبلي ▼</a>
+                <div class="dropdown">
+                    <a onclick="alert('لعرض نتيجتك، يرجى مراجعة لوحة الطالب.')"><i class="fa-solid fa-square-check"></i> الاختبار التحصيلي القبلي</a>
+                    <a onclick="alert('تم حفظ إجاباتك في مقياس التقبل التكنولوجي مسبقاً.')"><i class="fa-solid fa-list-check"></i> مقياس التقبل التكنولوجي</a>
+                </div>
+            </li>
+            
+            <li><a href="home.html"><i class="fa-solid fa-laptop-file"></i> المحتوى التعليمي</a></li>
+            
+            <li class="has-dropdown">
+                <a><i class="fa-solid fa-chart-simple"></i> أدوات القياس البعدي ▼</a>
+                <div class="dropdown">
+                    <a onclick="alert('مغلق حالياً.. يجب إتمام دراسة الموديولات أولاً.')"><i class="fa-solid fa-lock"></i> الاختبار التحصيلي البعدي</a>
+                    <a onclick="alert('مغلق حالياً.. يجب إتمام دراسة الموديولات أولاً.')"><i class="fa-solid fa-lock"></i> مقياس التقبل التكنولوجي</a>
+                </div>
+            </li>
+            
+            <li><a href="contact.html"><i class="fa-solid fa-headset"></i> تواصل معنا</a></li>
+        </ul>
+    </nav>
+
+    <div class="overlay" id="overlay" onclick="closeAllSidebars()"></div>
+
+    <div class="sidebar" id="userSidebar">
+        <div class="sidebar-header">
+            <div>
+                <h3>مرحباً، <span id="studentName"></span></h3>
+                <p style="color:#aab7b8; font-size:12px; margin-top:5px; font-weight:700;">طالب بكلية التربية</p>
+            </div>
+            <div class="close-sidebar" onclick="closeAllSidebars()"><i class="fa-solid fa-xmark"></i></div>
+        </div>
+        <ul>
+            <li><a href="dashboard.html"><i class="fa-solid fa-user-graduate"></i> لوحة الطالب</a></li>
+            <li><a href="about.html" class="active"><i class="fa-solid fa-circle-info"></i> عن البيئة</a></li>
+            <li><a onclick="alert('هذه الصفحة قيد الإنشاء حالياً ⏳'); closeAllSidebars();"><i class="fa-solid fa-link"></i> روابط تهمك</a></li>
+            <li><a href="support.html"><i class="fa-regular fa-comments"></i> الدعم والمساعدة</a></li>
+            <li><a href="contact.html"><i class="fa-solid fa-headset"></i> تواصل معنا</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <h2 class="page-title">عن البيئة التعليمية</h2>
+
+        <div class="intro-card">
+            <div class="intro-icon"><i class="fa-solid fa-laptop-code"></i></div>
+            <div class="intro-text">
+                <h2>مرحبًا بك في بيئة مهارات التحول الرقمي</h2>
+                <p>تهدف هذه البيئة إلى تنمية بعض مهارات التحول الرقمي لديك من خلال مجموعة من الموديولات التدريبية القائمة على التطبيقات العملية لأدوات رقمية معاصرة.. بما يسهم في إعداد الطالب لمتطلبات العصر الرقمي.</p>
+                <p>وتعتمد البيئة على توظيف مجموعة من التطبيقات الرقمية الحديثة، وذلك وفق تسلسل الموديولات التدريبية على النحو الآتي:</p>
+            </div>
+        </div>
+
+        <div class="modules-grid">
+            
+            <div class="module-item">
+                <div class="mod-icon"><i class="fa-solid fa-palette"></i></div>
+                <div class="mod-details">
+                    <h4>الموديول الأول: برنامج Canva</h4>
+                    <p>لتنمية مهارات تصميم المحتوى التعليمي الرقمي.</p>
+                </div>
+            </div>
+
+            <div class="module-item">
+                <div class="mod-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+                <div class="mod-details">
+                    <h4>الموديول الثاني: منصة Google Classroom</h4>
+                    <p>لتنمية مهارات إدارة عناصر المحتوى التعليمي الرقمي.</p>
+                </div>
+            </div>
+
+            <div class="module-item">
+                <div class="mod-icon"><i class="fa-solid fa-list-check"></i></div>
+                <div class="mod-details">
+                    <h4>الموديول الثالث: أداة Google Forms</h4>
+                    <p>لتنمية مهارات إعداد أدوات التقييم الإلكتروني.</p>
+                </div>
+            </div>
+
+            <div class="module-item">
+                <div class="mod-icon"><i class="fa-solid fa-hard-drive"></i></div>
+                <div class="mod-details">
+                    <h4>الموديول الرابع: خدمة Google Drive</h4>
+                    <p>لتنمية مهارات إدارة مستودعات التعلم الرقمية.</p>
+                </div>
+            </div>
+
+            <div class="module-item">
+                <div class="mod-icon"><i class="fa-solid fa-video"></i></div>
+                <div class="mod-details">
+                    <h4>الموديول الخامس: تطبيق Google Meet</h4>
+                    <p>لتنمية مهارات إدارة الاجتماعات الافتراضية.</p>
+                </div>
+            </div>
+
+            <div class="module-item">
+                <div class="mod-icon" style="color: #10a37f;"><i class="fa-solid fa-robot"></i></div>
+                <div class="mod-details">
+                    <h4>الموديول السادس: أداة ChatGPT</h4>
+                    <p>لتنمية مهارات توظيف أدوات الذكاء الاصطناعي في العملية التعليمية.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer">جميع الحقوق محفوظة للباحث © 2026</div>
+
+    <script>
+        document.getElementById("studentName").innerText = currentUser;
+
+        // دوال القوائم الجانبية
+        function toggleSidebar(id) { 
+            closeAllSidebars(); 
+            document.getElementById(id).classList.add("active"); 
+            document.getElementById("overlay").classList.add("active"); 
+        }
+        
+        function closeAllSidebars() { 
+            document.getElementById("userSidebar").classList.remove("active"); 
+            document.getElementById("overlay").classList.remove("active"); 
+        }
+
+        function logout() { 
+            if(confirm("هل تريد بالتأكيد تسجيل الخروج؟")) { 
+                localStorage.removeItem("currentUser"); 
+                window.location.href = "index.html"; 
+            } 
+        }
+    </script>
+</body>
+</html>
+

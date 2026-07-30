@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - تنمية مهارات التحول الرقمي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: linear-gradient(135deg, #f4f7fa 0%, #e0e8f5 100%); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 20px;
+        }
+        
+        .login-container { 
+            background: white; 
+            padding: 60px 50px; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 50px rgba(26, 43, 76, 0.08); 
+            width: 100%; 
+            max-width: 600px; 
+            text-align: center; 
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+            background: linear-gradient(to right, #1a2b4c, #5b8ee5);
+        }
+        
+        .logos { 
+            display: flex; justify-content: center; align-items: center;
+            gap: 40px; margin-bottom: 35px; 
+        }
+        .logos img { 
+            width: 140px; 
+            height: auto; object-fit: contain; transition: 0.3s;
+        }
+        
+        h1 { color: #1a2b4c; font-size: 30px; font-weight: 900; margin-bottom: 12px; line-height: 1.4; }
+        p { color: #7f8c8d; font-size: 18px; margin-bottom: 40px; font-weight: 600; }
+        
+        .input-group { margin-bottom: 25px; text-align: right; position: relative; }
+        .input-group label { display: block; color: #34495e; font-weight: 800; margin-bottom: 12px; font-size: 16px; }
+        
+        .input-wrapper { position: relative; }
+        .input-wrapper i { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: #5b8ee5; font-size: 20px; }
+        .input-wrapper input { 
+            width: 100%; padding: 18px 50px 18px 18px; border: 2px solid #eef2f5; border-radius: 12px; 
+            font-family: 'Cairo', sans-serif; font-size: 18px; font-weight: 600;
+            transition: all 0.3s ease; color: #1a2b4c; background-color: #fcfdfd;
+        }
+        .input-wrapper input:focus { border-color: #5b8ee5; outline: none; background: #ffffff; box-shadow: 0 0 0 4px rgba(91, 142, 229, 0.1); }
+        
+        .login-btn { 
+            width: 100%; background: #1a2b4c; color: white; border: none; padding: 20px; border-radius: 12px; 
+            font-size: 20px; font-weight: 800; cursor: pointer; transition: all 0.3s ease; 
+            font-family: 'Cairo', sans-serif; margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 12px;
+        }
+        .login-btn:hover { background: #2980b9; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(41, 128, 185, 0.3); }
+        
+        .error-msg { 
+            color: #e74c3c; background: #fadbd8; padding: 15px; border-radius: 8px; font-size: 16px; 
+            font-weight: 700; margin-top: 25px; display: none; animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+
+        @media (max-width: 600px) {
+            .login-container { padding: 40px 25px; }
+            .logos { gap: 20px; }
+            .logos img { width: 90px; }
+            h1 { font-size: 24px; }
+            p { font-size: 15px; margin-bottom: 30px; }
+            .input-wrapper input { padding: 15px 45px 15px 15px; font-size: 15px; }
+            .login-btn { font-size: 18px; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="logos">
+            <img src="azhar-logo.jpg" alt="شعار جامعة الأزهر">
+            <img src="edu-logo.jpg" alt="شعار كلية التربية">
+        </div>
+        
+        <h1>بيئة تنمية مهارات التحول الرقمي</h1>
+        <p>بوابة دخول الطلاب للمنصة التعليمية</p>
+        
+        <div class="input-group">
+            <label for="studentId">كود الطالب</label>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-id-badge"></i>
+                <input type="text" id="studentId" placeholder="مثال: STU001" autocomplete="off">
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label for="password">كلمة المرور</label>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="password" placeholder="أدخل كلمة المرور الخاصة بك">
+            </div>
+        </div>
+        
+        <button class="login-btn" onclick="login()">تسجيل الدخول <i class="fa-solid fa-arrow-right-to-bracket"></i></button>
+        
+        <div class="error-msg" id="errorMsg"><i class="fa-solid fa-circle-exclamation"></i> كود الطالب أو كلمة المرور غير صحيحة!</div>
+    </div>
+
+    <script>
+        // التوجيه الذكي لو الطالب مسجل دخول قبل كده
+        if (localStorage.getItem("currentUser")) {
+            let user = localStorage.getItem("currentUser");
+            if (localStorage.getItem(user + "_preTestDone") !== "true") window.location.href = "pretest.html";
+            else if (localStorage.getItem(user + "_surveyDone") !== "true") window.location.href = "survey.html";
+            else window.location.href = "home.html";
+        }
+
+        const usersDB = {
+            "STU001": "K7X2", "STU002": "M4P9", "STU003": "V8L1", "STU004": "P3W8", "STU005": "T9R4",
+            "STU006": "C2N7", "STU007": "H5F1", "STU008": "B6Y3", "STU009": "D4K6", "STU010": "Z1Q5",
+            "STU011": "X9A2", "STU012": "L4J7", "STU013": "E3M1", "STU014": "Y8R5", "STU015": "W2P6",
+            "STU016": "N7K3", "STU017": "F1D9", "STU018": "G5B4", "STU019": "Q6C8", "STU020": "S3T2",
+            "STU021": "A8X1", "STU022": "U4N9", "STU023": "J7M2", "STU024": "R5L6", "STU025": "C3P8",
+            "STU026": "K9Y4", "STU027": "H2W7", "STU028": "B1F5", "STU029": "D6Q3", "STU030": "V8T9",
+            "STU031": "P2E4", "STU032": "M7A1", "STU033": "L5J8", "STU034": "X3R6", "STU035": "Y9B2",
+            "STU036": "W1N5", "STU037": "T4K7", "STU038": "F8D3", "STU039": "G2C9", "STU040": "S6Q1",
+            "STU041": "N9X4", "STU042": "E1M7", "STU043": "U5J2", "STU044": "R8L3", "STU045": "C4P9",
+            "STU046": "K2Y6", "STU047": "H7W1", "STU048": "B3F8", "STU049": "D9Q5", "STU050": "V6T2",
+            "STU051": "A5X8", "STU052": "P1E6", "STU053": "M4A9", "STU054": "L8J3", "STU055": "X2R7",
+            "STU056": "Y7B4", "STU057": "W9N1", "STU058": "T3K5", "STU059": "F6D2", "STU060": "G1C8",
+            "STU061": "S9Q4", "STU062": "N4X1", "STU063": "E8M5", "STU064": "U2J9", "STU065": "R7L4",
+            "STU066": "C1P6", "STU067": "K5Y2", "STU068": "H8W9", "STU069": "B4F3", "STU070": "D2Q7",
+            "STU071": "V9T5", "STU072": "A3X6", "STU073": "P7E2", "STU074": "M1A8", "STU075": "L6J4",
+            "STU076": "X9R3", "STU077": "Y5B1", "STU078": "W8N7", "STU079": "T2K9", "STU080": "F4D5",
+            "STU081": "G7C2", "STU082": "S1Q8", "STU083": "N6X5", "STU084": "E3M9", "STU085": "U9J4",
+            "STU086": "R2L8", "STU087": "C7P1", "STU088": "K4Y5", "STU089": "H1W6", "STU090": "B9F2",
+            "STU091": "D5Q9", "STU092": "V3T7", "STU093": "A6X2", "STU094": "P8E5", "STU095": "M2A4",
+            "STU096": "L9J1", "STU097": "X4R8", "STU098": "Y1B7", "STU099": "W5N3", "STU100": "T7K6"
+        };
+
+        function login() {
+            let studentId = document.getElementById("studentId").value.trim().toUpperCase();
+            let password = document.getElementById("password").value.trim();
+            let errorMsg = document.getElementById("errorMsg");
+
+            if (usersDB[studentId] && usersDB[studentId] === password) {
+                localStorage.setItem("currentUser", studentId);
+                // توجيه الطالب الجديد للاختبار القبلي فوراً
+                window.location.href = "pretest.html";
+            } else {
+                errorMsg.style.display = "block";
+                setTimeout(() => {
+                    errorMsg.style.display = "none";
+                }, 3000);
+            }
+        }
+
+        document.getElementById("password").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                login();
+            }
+        });
+    </script>
+</body>
+</html>

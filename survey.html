@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مقياس التقبل التكنولوجي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Cairo', sans-serif; background-color: #f4f7f6; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        .top-header { width: 100%; max-width: 900px; background-color: #17a2b8; color: white; padding: 15px 25px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .brand-title { font-weight: 900; font-size: 20px; }
+        .student-badge { background: #138496; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+
+        .container { width: 100%; max-width: 900px; margin: auto; background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; overflow: hidden; }
+        
+        /* نظام التبديل بين الشاشات */
+        .view-section { display: none; animation: fadeIn 0.4s ease; }
+        .view-section.active { display: block; }
+
+        /* شاشة الاستبيان */
+        h2 { color: #17a2b8; text-align: center; font-size: 28px; margin-bottom: 20px; font-weight: 900; }
+        .instructions { background: #e2e3e5; padding: 15px 20px; border-radius: 8px; margin-bottom: 30px; font-size: 15px; line-height: 1.8; color: #444; font-weight: 600; border-right: 4px solid #17a2b8; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #eef2f5; padding: 12px; text-align: center; font-size: 15px; }
+        th { background-color: #17a2b8; color: white; font-weight: 800; }
+        td.text-right { text-align: right; font-weight: 700; color: #1a2b4c; }
+        
+        input[type="radio"] { transform: scale(1.3); cursor: pointer; accent-color: #17a2b8; }
+
+        .submit-btn { display: block; width: 100%; padding: 18px; background: #17a2b8; color: white; border: none; font-size: 18px; font-weight: 800; border-radius: 8px; cursor: pointer; margin-top: 30px; transition: 0.3s; font-family: 'Cairo', sans-serif; }
+        .submit-btn:hover { background: #138496; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(23, 162, 184, 0.3); }
+
+        /* شاشة الداش بورد (النتيجة) */
+        .result-title { text-align: center; color: #1a2b4c; font-size: 28px; font-weight: 900; margin-bottom: 40px; }
+        .dashboard-layout { display: flex; gap: 40px; flex-wrap: wrap; }
+        
+        .stats-container { flex: 1; min-width: 300px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #eee; }
+        .stat-card h4 { font-size: 14px; margin-bottom: 10px; color: #7f8c8d; font-weight: 700; }
+        .stat-card .value { font-size: 28px; font-weight: 900; }
+        .stat-card.correct .value { color: #2ecc71; }
+        .stat-card.wrong .value { color: #7f8c8d; }
+        .stat-card.perc .value { color: #17a2b8; }
+        .stat-card.time .value { color: #f39c12; font-size: 24px; }
+
+        .chart-container { flex: 1; min-width: 300px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #eee; display: flex; align-items: flex-end; justify-content: center; gap: 40px; height: 250px; position: relative; padding-bottom: 40px; }
+        .chart-container::before { content: ""; position: absolute; top: 20px; left: 20px; right: 20px; bottom: 40px; background-image: linear-gradient(to bottom, #f0f0f0 1px, transparent 1px); background-size: 100% 20%; z-index: 0; }
+        .bar-wrapper { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; width: 70px; }
+        .bar { width: 100%; border-radius: 5px 5px 0 0; transition: height 1s cubic-bezier(0.4, 0, 0.2, 1); height: 0; display: flex; justify-content: center; align-items: flex-start; padding-top: 10px; color: white; font-weight: bold; }
+        .bar.green { background: linear-gradient(to top, #17a2b8, #138496); }
+        .bar.red { background: linear-gradient(to top, #bdc3c7, #95a5a6); }
+        .bar-label { position: absolute; bottom: -30px; font-weight: 700; color: #34495e; font-size: 14px; white-space: nowrap; }
+
+        .finish-action { margin-top: 40px; text-align: center; }
+        .go-home-btn { background: #1a2b4c; color: white; border: none; padding: 15px 40px; font-size: 18px; font-weight: 800; border-radius: 8px; cursor: pointer; transition: 0.3s; font-family: 'Cairo', sans-serif; display: inline-flex; align-items: center; gap: 10px; }
+        .go-home-btn:hover { background: #2980b9; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(41, 128, 185, 0.3); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 600px) { .container { padding: 25px; } .dashboard-layout { flex-direction: column; } th, td { padding: 8px; font-size: 13px; } }
+    </style>
+</head>
+<body>
+
+    <script>
+        // توجيه أمني لصفحة الاستبيان
+        let currentUser = localStorage.getItem("currentUser");
+        if (!currentUser) window.location.href = "index.html";
+        else if (localStorage.getItem(currentUser + "_preTestDone") !== "true") window.location.href = "pretest.html"; 
+        else if (localStorage.getItem(currentUser + "_surveyDone") === "true") window.location.href = "home.html";
+    </script>
+
+    <div class="top-header">
+        <div class="brand-title">البيئة الذكية للتحول الرقمي</div>
+        <div class="student-badge">طالب: <span id="studentIdDisplay"></span></div>
+    </div>
+
+    <div class="container">
+        
+        <div id="view-survey" class="view-section active">
+            <h2>مقياس التقبل التكنولوجي</h2>
+            <div class="instructions">
+                <strong>عزيزي الطالب،،،</strong><br>
+                يرجى التكرم بقراءة كل عبارة من عبارات هذا المقياس بعنايةٍ وتأمل، واختيار البديل المناسب الذي ينطبق عليك بدقة وموضوعية من بين البدائل الآتية (دائمًا – أحيانًا – نادرًا). علمًا بأن هذا المقياس ليس اختبارًا، وليس هناك استجابة صواب وأخرى خطأ، مع مراعاة عدم ترك عبارة دون إبداء الرأي فيها بكل وضوح، حيث إنها لخدمة البحث العلمي فحسب.[span_2](start_span)[span_2](end_span)
+            </div>
+
+            <form id="surveyForm">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="5%">م</th>
+                            <th width="65%">عبارات المقياس</th>
+                            <th width="10%">دائمًا</th>
+                            <th width="10%">أحيانًا</th>
+                            <th width="10%">نادرًا</th>
+                        </tr>
+                    </thead>
+                    <tbody id="surveyTableBody">
+                    </tbody>
+                </table>
+                <button type="button" class="submit-btn" onclick="submitSurvey()">إرسال الاستجابات والتأكيد ➔</button>
+            </form>
+        </div>
+
+        <div id="view-result" class="view-section">
+            <h2 class="result-title">تقرير إتمام المقياس</h2>
+            <div class="dashboard-layout">
+                <div class="stats-container">
+                    <div class="stat-card correct"><h4>الدرجة التي حصلت عليها</h4><div class="value" id="resScore">0</div></div>
+                    <div class="stat-card wrong"><h4>أقصى درجة للمقياس</h4><div class="value" id="resMaxScore">0</div></div>
+                    <div class="stat-card perc" style="grid-column: span 2;"><h4>نسبة التقبل التكنولوجي</h4><div class="value" id="resPerc">0%</div></div>
+                    <div class="stat-card time" style="grid-column: span 2;"><h4>الزمن المستغرق</h4><div class="value" id="resTime">00:00</div></div>
+                </div>
+                <div class="chart-container">
+                    <div class="bar-wrapper"><div class="bar green" id="barPerc"></div><div class="bar-label">نسبة التقبل</div></div>
+                    <div class="bar-wrapper"><div class="bar red" id="barMissed"></div><div class="bar-label">النسبة المفقودة</div></div>
+                </div>
+            </div>
+            <div class="finish-action">
+                <button class="go-home-btn" onclick="goToHome()">الانتقال للصفحة الرئيسية للمنصة <i class="fa-solid fa-house"></i></button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.getElementById("studentIdDisplay").innerText = currentUser;
+        
+        let startTime = new Date();
+
+        // 40 عبارة كاملة مع ضبط العبارات الإيجابية (reverse: false) والعكسية (reverse: true)[span_3](start_span)[span_3](end_span)
+        const surveyStatements = [
+            // البعد الأول: سهولة الاستخدام (Ease of Use)[span_4](start_span)[span_4](end_span)
+            { text: "أستطيع التعامل مع واجهة Google Classroom دون الحاجة إلى مهارات متقدمة.", reverse: false }, // 1[span_5](start_span)[span_5](end_span)
+            { text: "أستطيع إعداد استبانات واختبارات إلكترونية عبر Google Form بخطوات بسيطة.", reverse: false }, // 2[span_6](start_span)[span_6](end_span)
+            { text: "أتحكم في تنظيم الملفات داخل Google Drive بطريقة واضحة وسهلة.", reverse: false }, // 3[span_7](start_span)[span_7](end_span)
+            { text: "أستخدم Google Meet لعقد الاجتماعات الافتراضية بسهولة.", reverse: false }, // 4[span_8](start_span)[span_8](end_span)
+            { text: "أستفدت من منصة Google Classroom في تنظيم المقررات وإدارة الواجبات بسهولة.", reverse: false }, // 5[span_9](start_span)[span_9](end_span)
+            { text: "يتيح التعامل مع Google Form الحصول على نتائج تحليلية دقيقة تساعد في تقييم الطلاب.", reverse: false }, // 6[span_10](start_span)[span_10](end_span)
+            { text: "أميل لحفظ ملفاتي على Google Drive لتسهيل الرجوع إليها ومشاركتها في أي وقت.", reverse: false }, // 7[span_11](start_span)[span_11](end_span)
+            { text: "أعدّ نماذج اختبارات إلكترونية عبر Google Forms لاستخراج نتائج دقيقة من إجابات الطلاب.", reverse: false }, // 8[span_12](start_span)[span_12](end_span)
+            { text: "أُشارك الملفات الدراسية عبر Google Drive لضمان سهولة الوصول إليها في أي وقت ومكان.", reverse: false }, // 9[span_13](start_span)[span_13](end_span)
+
+            // البعد الثاني: المنفعة المدركة (Perceived Usefulness) - جميعها عبارات عكسية (سلبية)[span_14](start_span)[span_14](end_span)
+            { text: "أواجه صعوبات تقنية متكررة عند تنفيذ اختبارات من خلال Google Form.", reverse: true }, // 10[span_15](start_span)[span_15](end_span)
+            { text: "استخدام واجهة Google Classroom يمثل صعوبة لي في إدارة الصفوف.", reverse: true }, // 11[span_16](start_span)[span_16](end_span)
+            { text: "أجد أن التعامل مع ChatGPT يحتاج إلى معرفة لغات برمجة متقدمة.", reverse: true }, // 12[span_17](start_span)[span_17](end_span)
+            { text: "ألاحظ أن الانضمام إلى الاجتماعات عبر Google Meet يتطلب خطوات معقدة.", reverse: true }, // 13[span_18](start_span)[span_18](end_span)
+            { text: "أرى أن Google Classroom يعيق تنظيم إدارة الصف الدراسي.", reverse: true }, // 14[span_19](start_span)[span_19](end_span)
+            { text: "أجد مشاركة تنظيم الملفات في Google Drive أمرًا معقد يستغرق وقتًا طويلًا.", reverse: true }, // 15[span_20](start_span)[span_20](end_span)
+            { text: "الأستعانة بـ Canva لم يقدم فائدة حقيقية لجودة تصميم المحتوى التعليمي.", reverse: true }, // 16[span_21](start_span)[span_21](end_span)
+            { text: "أعتقد تطبيق الاختبارات عبر Google Form طريقة معقدة لقياس أداء الطلاب.", reverse: true }, // 17[span_22](start_span)[span_22](end_span)
+            { text: "أتردد في إجراء اختبارات عبر Google Forms لأنه غير عملي في التقييم الفعلي لدرجات الطلاب.", reverse: true }, // 18[span_23](start_span)[span_23](end_span)
+            { text: "أتجنب استخدام منصة Google Classroom بسبب تعقيد واجهته.", reverse: true }, // 19[span_24](start_span)[span_24](end_span)
+            { text: "أشعر بعدم الارتياح عند التعامل مع ChatGPT لأنه ينتج محتوى محدودًا يقل فيه توليد الأفكار.", reverse: true }, // 20[span_25](start_span)[span_25](end_span)
+            { text: "استخدام نماذج Google Form يظهر قصورًا في تحليل أداء الطلاب.", reverse: true }, // 21[span_26](start_span)[span_26](end_span)
+            { text: "الاستفادة من ChatGPT في إعداد المحتوى محدودة للغاية.", reverse: true }, // 22[span_27](start_span)[span_27](end_span)
+            { text: "مشاركتي في الاجتماعات عبر Google Meet محدود الحضور والتفاعل.", reverse: true }, // 23[span_28](start_span)[span_28](end_span)
+            { text: "أكتفي باستخدام الوسائل التقليدية بدلًا من Canva في إعداد وتصميم المحتوى التعليمي.", reverse: true }, // 24[span_29](start_span)[span_29](end_span)
+
+            // البعد الثالث: الميل نحو الاستخدام (Tendency to Use)[span_30](start_span)[span_30](end_span)
+            { text: "أجد أن استخدام Canva في تصميم العروض التقديمية عملية بسيطة ومباشرة.", reverse: false }, // 25[span_31](start_span)[span_31](end_span)
+            { text: "يساعدني Canva على تصميم عروض تقديمية أكثر جاذبية.", reverse: false }, // 26[span_32](start_span)[span_32](end_span)
+            { text: "أرغب في تصميم المحتوى التعليمي باستخدام Canva لما يوفره من جاذبية بصرية.", reverse: false }, // 27[span_33](start_span)[span_33](end_span)
+            { text: "أفضل إعداد الاختبارات عبر Google Forms لما توفره من دقة وسرعة في التصحيح.", reverse: false }, // 28[span_34](start_span)[span_34](end_span)
+            { text: "أفضل إدارة عناصر المحتوى عبر Google Classroom لما يوفره من سهولة في التنظيم.", reverse: false }, // 29[span_35](start_span)[span_35](end_span)
+            { text: "أشعر بالحماس عند عقد اجتماعات عبر Google Meet لقدرته على توفير التفاعل والتواصل.", reverse: false }, // 30[span_36](start_span)[span_36](end_span)
+            { text: "استخدام منصة Google Classroom حل العديد من مشكلاتي الدراسية.", reverse: false }, // 31[span_37](start_span)[span_37](end_span)
+            { text: "أُنجز اجتماعات افتراضية باستخدام Google Meet للتواصل مع الطلاب.", reverse: false }, // 32[span_38](start_span)[span_38](end_span)
+            { text: "أُنفّذ عروضًا تعليمية من خلال Canva أثناء إعداد دروسي بانتظام.", reverse: false }, // 33[span_39](start_span)[span_39](end_span)
+
+            // البعد الرابع: الاستخدام الفعلي (Actual Use)[span_40](start_span)[span_40](end_span)
+            { text: "أتعامل مع ChatGPT بطريقة سهلة دون الحاجة لتعلم أوامر خاصة.", reverse: false }, // 34[span_41](start_span)[span_41](end_span)
+            { text: "يسهم ChatGPT في توليد أفكار تعليمية جديدة.", reverse: false }, // 35[span_42](start_span)[span_42](end_span)
+            { text: "يوفر التعامل مع Google Meet فرصًا للتفاعل الفوري للطلاب والمعلمين.", reverse: false }, // 36[span_43](start_span)[span_43](end_span)
+            { text: "يُمكّنني استخدام Google Drive من تسهيل مشاركة الملفات وتنظيمها بكفاءة.", reverse: false }, // 37[span_44](start_span)[span_44](end_span)
+            { text: "استخدامي لـ Canva في تصميم المحتوى التعليمي محدودة مقارنة بالطرق التقليدية.", reverse: true }, // 38 (سلبية)[span_45](start_span)[span_45](end_span)
+            { text: "أحرص على التعامل مع ChatGPT لأنه يضيف محتوى تعليمي بأفكار جديدة.", reverse: false }, // 39[span_46](start_span)[span_46](end_span)
+            { text: "أوظف استخدام ChatGPT في صياغة محتوى الدروس والأنشطة التعليمية.", reverse: false } // 40[span_47](start_span)[span_47](end_span)
+        ];
+
+        const tbody = document.getElementById('surveyTableBody');
+        
+        surveyStatements.forEach((item, index) => {
+            let row = `<tr>
+                <td>${index + 1}</td>
+                <td class="text-right">${item.text}</td>
+                <td><input type="radio" name="s${index}" value="دائما" required></td>
+                <td><input type="radio" name="s${index}" value="أحيانا"></td>
+                <td><input type="radio" name="s${index}" value="نادرا"></td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+
+        function submitSurvey() {
+            let allAnswered = true;
+            let surveyData = {};
+            let totalScore = 0;
+            
+            for(let i = 0; i < surveyStatements.length; i++) {
+                let selected = document.querySelector(`input[name="s${i}"]:checked`);
+                if(!selected) {
+                    allAnswered = false;
+                    break;
+                }
+                
+                let answerValue = selected.value;
+                surveyData[`s${i}`] = answerValue;
+                
+                // حساب الدرجات بناءً على الاتجاه (إيجابي: 3-2-1 | عكسي: 1-2-3)[span_48](start_span)[span_48](end_span)
+                let itemScore = 0;
+                if (!surveyStatements[i].reverse) {
+                    // عبارة إيجابية[span_49](start_span)[span_49](end_span)
+                    if (answerValue === "دائما") itemScore = 3;[span_50](start_span)[span_50](end_span)
+                    else if (answerValue === "أحيانا") itemScore = 2;[span_51](start_span)[span_51](end_span)
+                    else if (answerValue === "نادرا") itemScore = 1;[span_52](start_span)[span_52](end_span)
+                } else {
+                    // عبارة عكسية[span_53](start_span)[span_53](end_span)
+                    if (answerValue === "دائما") itemScore = 1;[span_54](start_span)[span_54](end_span)
+                    else if (answerValue === "أحيانا") itemScore = 2;[span_55](start_span)[span_55](end_span)
+                    else if (answerValue === "نادرا") itemScore = 3;[span_56](start_span)[span_56](end_span)
+                }
+                
+                totalScore += itemScore;
+            }
+
+            if(!allAnswered) {
+                alert("يرجى الإجابة على جميع العبارات الـ 40 قبل الإرسال.");
+                return;
+            }
+
+            let timeDiff = Math.floor((new Date() - startTime) / 1000);
+            let mins = Math.floor(timeDiff / 60); let secs = timeDiff % 60;
+            let timeString = `${mins}:${secs < 10 ? '0' : ''}${secs} دقائق`;
+
+            let maxPossibleScore = surveyStatements.length * 3; // 120 درجة[span_57](start_span)[span_57](end_span)
+            let perc = (totalScore / maxPossibleScore) * 100;
+
+            localStorage.setItem(currentUser + "_surveyAnswers", JSON.stringify(surveyData));
+            localStorage.setItem(currentUser + "_surveyScore", totalScore);
+            localStorage.setItem(currentUser + "_surveyDone", "true");
+            
+            document.getElementById("resScore").innerText = totalScore;
+            document.getElementById("resMaxScore").innerText = maxPossibleScore;
+            document.getElementById("resPerc").innerText = Math.round(perc) + "%";
+            document.getElementById("resTime").innerText = timeString;
+
+            setTimeout(() => {
+                document.getElementById("barPerc").style.height = perc + "%";
+                document.getElementById("barPerc").innerText = Math.round(perc) + "%";
+                document.getElementById("barMissed").style.height = (100 - perc) + "%";
+                document.getElementById("barMissed").innerText = Math.round(100 - perc) + "%";
+            }, 300);
+
+            document.getElementById("view-survey").classList.remove("active");
+            document.getElementById("view-result").classList.add("active");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goToHome() {
+            window.location.href = "home.html";
+        }
+    </script>
+</body>
+</html>
+

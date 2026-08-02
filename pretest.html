@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الاختبار التحصيلي القبلي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Cairo', sans-serif; background-color: #f4f7fa; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+
+        .top-header { width: 100%; max-width: 900px; background-color: #1a2b4c; color: white; padding: 15px 25px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .brand-title { font-weight: 900; font-size: 20px; }
+        .student-badge { background: #5b8ee5; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+
+        .app-container { width: 100%; max-width: 900px; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 40px; position: relative; overflow: hidden; }
+
+        .view-section { display: none; animation: fadeIn 0.4s ease; }
+        .view-section.active { display: block; }
+
+        .instructions h2 { color: #1a2b4c; font-size: 28px; margin-bottom: 20px; font-weight: 900; border-bottom: 3px solid #f0f4f8; padding-bottom: 15px; }
+        .instructions p, .instructions li { color: #555; font-size: 16px; line-height: 1.8; margin-bottom: 15px; font-weight: 600; }
+        .instructions ul { padding-right: 25px; margin-bottom: 30px; }
+        .start-btn { background: #2980b9; color: white; border: none; padding: 15px 40px; font-size: 18px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: 0.3s; display: block; margin: 0 auto; font-family: 'Cairo', sans-serif; }
+        .start-btn:hover { background: #1f6391; transform: translateY(-2px); }
+
+        .progress-bar { width: 100%; height: 8px; background: #eef2f5; border-radius: 10px; margin-bottom: 30px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #2ecc71; width: 0%; transition: width 0.3s; }
+        .question-header { display: flex; justify-content: space-between; color: #7f8c8d; font-weight: 700; margin-bottom: 20px; font-size: 15px; }
+        .question-text { font-size: 22px; color: #1a2b4c; font-weight: 800; margin-bottom: 30px; line-height: 1.5; }
+        
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 30px; }
+        .option-btn { background: #f8faff; border: 2px solid #eef2f5; padding: 18px 20px; border-radius: 10px; font-family: 'Cairo', sans-serif; font-size: 16px; font-weight: 700; color: #34495e; cursor: pointer; transition: 0.2s; text-align: right; }
+        .option-btn:hover { border-color: #5b8ee5; background: #f0f4f8; }
+        .option-btn.selected { background: #5b8ee5; color: white; border-color: #5b8ee5; }
+
+        .next-btn { background: #f39c12; color: white; border: none; padding: 15px 30px; font-size: 16px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: 0.3s; width: 100%; font-family: 'Cairo', sans-serif; opacity: 0.5; pointer-events: none; }
+        .next-btn.active { opacity: 1; pointer-events: auto; }
+        .next-btn:hover { background: #e67e22; }
+
+        .result-title { text-align: center; color: #1a2b4c; font-size: 28px; font-weight: 900; margin-bottom: 40px; }
+        .dashboard-layout { display: flex; gap: 40px; flex-wrap: wrap; }
+        
+        .stats-container { flex: 1; min-width: 300px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #eee; }
+        .stat-card h4 { font-size: 14px; margin-bottom: 10px; color: #7f8c8d; }
+        .stat-card .value { font-size: 28px; font-weight: 900; }
+        .stat-card.correct .value { color: #2ecc71; }
+        .stat-card.wrong .value { color: #e74c3c; }
+        .stat-card.perc .value { color: #2980b9; }
+        .stat-card.time .value { color: #f39c12; font-size: 24px; }
+
+        .chart-container { flex: 1; min-width: 300px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #eee; display: flex; align-items: flex-end; justify-content: center; gap: 40px; height: 250px; position: relative; padding-bottom: 40px; }
+        .chart-container::before { content: ""; position: absolute; top: 20px; left: 20px; right: 20px; bottom: 40px; background-image: linear-gradient(to bottom, #f0f0f0 1px, transparent 1px); background-size: 100% 20%; z-index: 0; }
+        .bar-wrapper { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; width: 60px; }
+        .bar { width: 100%; border-radius: 5px 5px 0 0; transition: height 1s cubic-bezier(0.4, 0, 0.2, 1); height: 0; display: flex; justify-content: center; align-items: flex-start; padding-top: 10px; color: white; font-weight: bold; }
+        .bar.green { background: linear-gradient(to top, #27ae60, #2ecc71); }
+        .bar.red { background: linear-gradient(to top, #c0392b, #e74c3c); }
+        .bar-label { position: absolute; bottom: -30px; font-weight: 700; color: #34495e; font-size: 14px; }
+
+        .finish-action { margin-top: 40px; text-align: center; }
+        .go-survey-btn { background: #1a2b4c; color: white; border: none; padding: 15px 40px; font-size: 18px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: 0.3s; font-family: 'Cairo', sans-serif; display: inline-flex; align-items: center; gap: 10px; }
+        .go-survey-btn:hover { background: #2980b9; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(41, 128, 185, 0.3); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 600px) { .app-container { padding: 25px; } .dashboard-layout { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+    <script>
+        // توجيه أمني لصفحة الاختبار
+        let currentUser = localStorage.getItem("currentUser");
+        if (!currentUser) window.location.href = "index.html"; 
+        
+        if (localStorage.getItem(currentUser + "_preTestDone") === "true") {
+            if (localStorage.getItem(currentUser + "_surveyDone") !== "true") {
+                window.location.href = "survey.html";
+            } else {
+                window.location.href = "home.html";
+            }
+        }
+    </script>
+
+    <div class="top-header">
+        <div class="brand-title">البيئة الذكية للتحول الرقمي</div>
+        <div class="student-badge">طالب: <span id="studentIdDisplay"></span></div>
+    </div>
+
+    <div class="app-container">
+        
+        <div id="view-instructions" class="view-section active instructions">
+            <h2>تعليمات الإجابة عن الاختبار</h2>
+            <p><strong>عزيزي الطالب:</strong> يرجى اتباع التعليمات التالية بعناية والاسترشاد بها قبل أن تقوم بالإجابة عن هذا الاختبار.</p>
+            <p><strong>هدف الاختبار:</strong> قياس الجانب المعرفي المرتبط ببعض مهارات التحول الرقمي لدى طلاب كلية التربية بجامعة الأزهر.</p>
+            <ul>
+                <li>يتكون هذا الاختبار من (87) سؤالاً من نوع الاختيار من متعدد.</li>
+                <li>اقرأ كل سؤال وبدائله بعناية قبل اختيار الإجابة.</li>
+                <li>اختر بديلًا واحدًا فقط من بين البدائل الأربعة المتاحة لكل سؤال، ثم اضغط على السؤال التالي.</li>
+                <li>سوف تعطى تقريرًا في نهاية الاختبار بعدد الإجابات الصحيحة والخاطئة والنسبة المئوية والزمن المستغرق.</li>
+            </ul>
+            <button class="start-btn" onclick="startTest()">بدء الاختبار الآن ➔</button>
+        </div>
+
+        <div id="view-question" class="view-section">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="question-header"><span id="qPart">أسئلة الاختيار من متعدد</span><span id="qCounter">السؤال 1 من 87</span></div>
+            <div class="question-text" id="qText">جاري تحميل السؤال...</div>
+            <div class="options-grid" id="optionsGrid"></div>
+            <button class="next-btn" id="nextBtn" onclick="submitAnswer()">التالي ➔</button>
+        </div>
+
+        <div id="view-result" class="view-section">
+            <h2 class="result-title">تقرير نتيجة الاختبار</h2>
+            <div class="dashboard-layout">
+                <div class="stats-container">
+                    <div class="stat-card correct"><h4>الإجابات الصحيحة</h4><div class="value" id="resCorrect">0</div></div>
+                    <div class="stat-card wrong"><h4>الإجابات الخاطئة</h4><div class="value" id="resWrong">0</div></div>
+                    <div class="stat-card perc" style="grid-column: span 2;"><h4>النسبة المئوية للدرجة الكلية</h4><div class="value" id="resPerc">0%</div></div>
+                    <div class="stat-card time" style="grid-column: span 2;"><h4>الزمن المستغرق</h4><div class="value" id="resTime">00:00</div></div>
+                </div>
+                <div class="chart-container">
+                    <div class="bar-wrapper"><div class="bar green" id="barCorrect"></div><div class="bar-label">صحيحة</div></div>
+                    <div class="bar-wrapper"><div class="bar red" id="barWrong"></div><div class="bar-label">خاطئة</div></div>
+                </div>
+            </div>
+            <div class="finish-action">
+                <button class="go-survey-btn" onclick="goToSurvey()">الانتقال لمقياس التقبل التكنولوجي ➔</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.getElementById("studentIdDisplay").innerText = currentUser;
+
+        const questions = [
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "عند إعداد عرض تقديمي باستخدام Canva، يتميز البرنامج بتوفيره:", options: ["النمذجة الثلاثية.", "السحب والإفلات.", "لغات البرمجة.", "أنظمة التشغيل."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "عند الرغبة في الانضمام إلى صف دراسي قائم، تتطلب المنصة إدخال:", options: ["رمز الصف.", "بيانات الصف.", "محتوى الصف.", "هوية الصف."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يتم تقسيم النموذج إلى أقسام متعددة باستخدام خيار:", options: ["Required.", "Duplicate.", "Preview.", "Section."], answer: 3 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "لتتمكن من الوصول لملفاتك والعمل عليها في حالة انقطاع اتصالك بالشبكة، نفعل:", options: ["Standby.", "Offline.", "Cache.", "Local."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "عندما يرسل لك المعلم رمزاً للدخول الاجتماع، فإنك تضعه في المساحة المخصصة تحت مسمى:", options: ["Create link.", "Settings app.", "Start meeting.", "Enter code."], answer: 3 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "الأمر المسؤول عن تخصيص اسم المستخدم الظاهر في نظام ChatGPT يسمي:", options: ["Profile name.", "Display name.", "Login name.", "Activity name."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "تعد منصة جوجل كلاس روم من المنصات التي تقدم خدماتها للمؤسسات التعليمية بشكل:", options: ["تقنيات إنترنت الأشياء.", "تقنيات الحوسبة السحابية.", "تقنيات الذكاء الاصطناعي.", "تقنيات الواقع المعزز."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يتم تصدير البيانات المجمعة من نماذج جوجل لتحليلها بدقة عبر تطبيق:", options: ["Google Slides.", "Google Keep.", "Google Sheets.", "Google Meet."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يُعرف Google Drive بأنه مستودع رقمي سحابي يهدف بشكل أساسي إلى:", options: ["تحرير ملفات الفيديو.", "تخزين وإدارة الملفات.", "تشغيل برامج الحماية.", "تصميم مواقع الإنترنت."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "الوظيفة الجوهرية التي صُممت من أجلها أداة Google Meet في البيئة التعليمية هي:", options: ["تحرير الوثائق النصية.", "تصميم الصور الرقمية.", "عقد الاجتماعات المرئية.", "إرسال البريد الصوتي."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يعتمد ChatGPT في توليد الاستجابات المترابطة والمنطقية للمستخدم على تقنيات:", options: ["التعداد الرقمي البسيط.", "التعلم العميق والنماذج.", "التوصيلات السلكية للشبكة.", "الأجهزة والقطع الصلبة."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "تعدد صيغ التصدير من خلال Canva يفيد المستخدم في:", options: ["تثبيت حجم الملف.", "تقليل حجم الشرائح.", "تنوع طرق العرض.", "تعديل حجم الخط."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "عندما يرغب المتعلم في تأسيس صف دراسي جديد يتم اختيار الأمر:", options: ["Class Archive.", "Class Grades.", "Create Class.", "Class Leave."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "الإجراء المطلوب لضمان عدم إهمال الطالب لأي جزئية في الاختبار هو:", options: ["Required.", "Duplicate.", "Preview.", "Publish."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يتم الدخول إلى Drive باستخدام حساب المستخدم المفعل على:", options: ["Yahoo.", "Gmail.", "Facebook.", "Outlook."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "للمشاركة في اجتماع تعليمي تم إنشاؤه مسبقاً، يتوجب على الطالب النقر داخل:", options: ["خانة إدخال رمز أو رابط.", "خانة إدخال بريد أو اسم.", "خانة إدخال نص أو مسمى.", "حقل إدخال كلمة أو جملة."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "تظهر قائمة المحادثات السابقة داخل حساب المستخدم في منطقة:", options: ["الشريط العلوي للموقع.", "وسط شاشة المحادثات.", "إعدادات الحساب العامة.", "الشريط الجانبي للواجهة."], answer: 3 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "تعتمد منصة Google Classroom في إتاحة الوصول إلى الصفوف الدراسية على:", options: ["اشتراك سنوي.", "باقات مدفوعة.", "مجاني بالكامل.", "تجريبي مؤقت."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "تُعد الرسوم البيانية المولدة تلقائياً داخل النماذج أداة فعالة من أجل:", options: ["التحليل السريع والدقيق للنتائج.", "تشفير بيانات الطلاب الشخصية.", "زيادة حجم ملفات الاستبيانات.", "منع تصدير البيانات للتطبيقات."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يستطيع المعلم تصنيف ملفاته وفقاً للوحدات الدراسية المحددة من خلال ميزة:", options: ["تشفير الملفات.", "مساحة الحساب.", "حماية التشغيل.", "تنظيم المحتوى."], answer: 3 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "تُعد أداة Google Meet وسيلة فعالة لدعم التحول الرقمي من خلال توظيف ميزة:", options: ["الاتصال غير المتزامن.", "الاتصال المرئي المتزامن.", "التخزين الورقي للملفات.", "بناء قواعد البيانات."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "الخاصية التي تسمح للمتعلم بتطوير فكرته تدريجياً داخل ChatGPT هي ميزة:", options: ["حذف الرسائل القديمة.", "سرعة الاتصال بالويب.", "تغيير ألوان الواجهة.", "الاحتفاظ بسياق الحوار."], answer: 3 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "لتعديل صورة الحساب داخل Canva يتم الدخول إلى:", options: ["Animate.", "Download.", "Background.", "Settings."], answer: 3 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يصنف قبول شروط المنصة قبل كتابة بيانات الصف كإجراء:", options: ["إجراء تكميلي اختياري.", "إجراء تنظيمي إلزامي.", "إجراء فني استثنائي.", "إجراء تربوي موجه."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يُمثل تفعيل خيار \"مطلوب\" في واجهة إعداد الأسئلة إجراءً برمجياً يهدف لـ:", options: ["منع تخطي السؤال.", "منع حذف السؤال.", "منع نسخ السؤال.", "منع تعديل السؤال."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يتم رفع \"ملف واحد\" أو عدة ملفات منفصلة من جهاز الكمبيوتر من خلال:", options: ["New folder.", "File upload.", "Folder upload.", "Google Sheets."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "الخيار المسؤول عن قبول دخول طالب معين لغرفة الاجتماع الافتراضية هو أمر:", options: ["Pin.", "Mute.", "Deny.", "Admit."], answer: 3 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "المسار الصحيح لكتابة \"البرومبت\" أو الأمر النصي المطلوب تنفيذه هو:", options: ["Search chats.", "Ask anything.", "Display name.", "Password field."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يمكن الوصول إلى أيقونة Classroom من خلال قائمة:", options: ["Google Drive.", "Google Search.", "Google apps.", "Google Photos."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "عند البدء في استخدام Google Forms، فإن الإجراء الأول لإتاحة إنشاء النماذج يتمثل في:", options: ["تحميل نسخة من التطبيق على الجهاز.", "تسجيل الدخول باستخدام حساب مفعل.", "فتح جدول بيانات وتحويله إلى نموذج.", "إنشاء قاعدة بيانات خارجية للردود."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "لتغيير مظهر واجهة العمل بين الوضع الفاتح Light أو الوضع الداكن Dark نستخدم الأمر:", options: ["Appearance.", "Organize.", "Commenter.", "Viewer."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "البيانات الأساسية المطلوبة لتأمين الدخول إلى مساحة اجتماعاتك الخاصة هي:", options: ["رقم هاتف المستخدم.", "اسم مدرسة المعلم.", "حساب المستخدم.", "رابط الموقع الشخصي."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "لتعديل لغة واجهة المنصة بما يتوافق مع تفضيلاتك الشخصية، يتوجب عليك الدخول إلى:", options: ["قائمة المساعدة التقنية.", "إعدادات الهوية والعلامة.", "إعدادات الحساب الشخصي.", "إعدادات الدعم والمساعدة."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "لضبط ألوان التمييز (Accent color) داخل ChatGPT متاح في تبويب:", options: ["General.", "Personal.", "Security.", "Privacy."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "التبويب الرئيسي المسؤول عن إدارة وتصنيف كافة المشاركين في الصف الدراسي هو:", options: ["Stream.", "Classwork.", "People.", "Grades."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "لتمكين المتعلم من المقارنة بين حله والحل النموذجي بعد انتهاء التقييم من خلال:", options: ["Missed questions.", "Correct answers.", "Manual review.", "Answer key."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "لتنظيم ملفاتك وتجميع كافة الملفات المترابطة داخل مساحة مستقلة، نختار:", options: ["New Folder.", "New Category.", "New Storage.", "New Cabinet."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "تعتمد مهارة تنظيم الاجتماع على قدرة المعلم على التحكم المباشر في:", options: ["سرعة الإنترنت.", "لغة المستخدم.", "صلاحيات الانضمام.", "سعة التخزين."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "أي من الخيارات التالية يُعد المدخل الأساسي لبناء سيناريوهات الحوار مع ChatGPT:", options: ["Advanced Search.", "Auto Filter.", "Ask anything.", "External Link."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "الخطوة الأولى للوصول إلى المنصة من خلال جهاز الكمبيوتر هي فتح:", options: ["برامج التصميم.", "متصفح الإنترنت.", "ملفات النظام.", "لوحة التحكم."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "لبدء بناء اختبار إلكتروني جديد تماماً من الصفر، يتوجب على المعلم اختيار:", options: ["Quick form.", "Smart form.", "Blank form.", "Free form."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "لإنشاء مساحة تنظيمية جديدة لتصنيف الملفات داخل الدرايف نختار من قائمة New:", options: ["File upload.", "Google Docs.", "Folder upload.", "New folder."], answer: 3 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "تظهر أداة \"Google Meet\" للمتعلم ضمن قائمة الأدوات المنسدلة تحت مسمى:", options: ["Google Apps.", "Google Settings.", "Google Sync.", "Google Accounts."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يُستخدم البريد الإلكتروني في واجهة الدخول لـ ChatGPT كوسيلة أساسية لـ:", options: ["تحسين مظهر الواجهة.", "تعريف هوية المستخدم.", "تغيير لغة المحادثة.", "حذف الرسائل القديمة."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يستخدم خيار Edit داخل إعدادات Canva من أجل:", options: ["تغيير زمن الانتقال.", "تغيير شكل القالب.", "تغيير الاسم المسجل.", "تغيير صيغة التصدير."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يتم الانتهاء من إجراءات دعوة المعلم للانضمام للصف عبر النقر على زر:", options: ["Invite.", "Actions.", "Create.", "Assign."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يستطيع الطلاب مراجعة أخطائهم فقط دون رؤية الإجابة الصحيحة من خلال الأمر:", options: ["Make this a quiz.", "Correct answers.", "Form description.", "Missed questions."], answer: 3 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "الأمر الذي يمنع المستخدم من حذف الملف أو تعديله في Google Drive وتسمح له بالرؤية هي:", options: ["Partner.", "Follow.", "Viewer.", "Examine."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "عند رغبة المعلم في عرض \"شاشة الجهاز بالكامل\" بما تحتويه من ملفات وبرامج، نختار:", options: ["Group Screen.", "Active Screen.", "Entire Screen.", "Open Screen."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "عندما يرغب المعلم في عمل Archive للمحادثة فإنه يتمكن من:", options: ["حذفها للأبد من الحساب.", "تغيير محتواها النصي.", "منع الآخرين من رؤيتها.", "إخفاؤها مع الحفاظ عليها."], answer: 3 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يتم تغيير لغة واجهة منصة Google Classroom من خلال:", options: ["Stream.", "Grades.", "Actions.", "Manage."], answer: 3 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يسهم اختيار قالب جاهز عند إنشاء نموذج جديد في:", options: ["إغلاق النموذج تلقائيًا بعد الإنشاء.", "منع تعديل نوع الأسئلة لاحقًا.", "تسريع عملية إعداد النموذج.", "حذف إعدادات التقييم الافتراضية."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "عند رغبة المستخدم في نقل ملف من مجلد إلى آخر داخل Google Drive فإنه يستخدم:", options: ["Move to.", "Trash.", "response.", "Preview."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "لبدء لقاء افتراضي جديد في الحال بعد فتح واجهة التطبيق، نختار أولاً زر:", options: ["Join meeting.", "Settings tab.", "Preview mode.", "New meeting."], answer: 3 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "الإجراء الذي يضمن بقاء المحادثة الهامة في صدارة القائمة الجانبية هو:", options: ["تثبيت المحادثة.", "دمج المحادثة.", "وسم المحادثة.", "ترقية المحادثة."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يستخدم الأمر Duplicate Page داخل Canva عن الرغبة في:", options: ["إنشاء نسخة من الشريحة.", "تغيير خلفية الشريحة.", "اضافة حركة للشريحة.", "اضافة انتقال للشريحة."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "لإضافة زميل معلم للمشاركة في إدارة وتقديم المحتوى داخل الصف، نتوجه لـ:", options: ["Users.", "People.", "Grades.", "Owners."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يُمثل اختيار Anyone with the link مهارة تهدف إلى:", options: ["توسيع دائرة الوصول.", "تعديل محتوى الأسئلة.", "حذف ردود المستجيبين.", "تشفير رابط الاختبار."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "الصلاحية التي تسمح للطالب \"بفتح الملف وقراءته فقط\" دون إجراء أي تعديل هي:", options: ["Editor.", "Viewer.", "Commenter.", "Owner."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "لتعديل أبعاد العرض التقديمي بما يتوافق مع قياسات أجهزة العرض المختلفة، نستخدم خيار:", options: ["Resize.", "Styles.", "Animate.", "Preview."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يمكن إدراج المحتوى التعليمي في ساحة المشاركات من خلال تبويب:", options: ["Grades.", "People.", "Continue.", "Stream."], answer: 3 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "لمحاكاة تجربة الطالب الفعلية والتحقق من جودة بناء الاختبار قبل نشره، نختار:", options: ["Simulate.", "Browse.", "Preview.", "Monitor."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يمكن لمنظم الاجتماع التحكم في وسائط الصوت والصورة الخاصة به:", options: ["بصورة مستقلة عن دخول الطلاب.", "بصورة مشروطة بقبول المشاركين.", "بصورة تلقائية عند اكتمال العدد.", "بصورة يدوية بعد موافقة الجميع."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "أي من الأوامر التالية يُستخدم لإعادة ترتيب المحادثات الهامة في أعلى الشريط الجانبي:", options: ["Archive.", "Pin chat.", "Share.", "Delete."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "عند الرغبة في الاحتفاظ بشريحة كمرجع للمعلم فقط دون عرضها للطلاب نستخدم:", options: ["Lock.", "Hide.", "Styles.", "Copy."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "في حالة الرغبة في نقل الملفات من الذاكرة المحلية للجهاز إلى الفصل يتم اختيار الأمر:", options: ["Upload.", "Import.", "Attach.", "Embed."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يتم استخراج وحفظ استجابات المشاركين على جهاز الكمبيوتر الشخصي بصيغة:", options: ["PDF.", "DOC.", "CSV.", "PPT."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "المسار الصحيح لتشغيل أدوات التواصل الصوتي والبصري عند فتح شاشة الاجتماع هو:", options: ["Turn off microphone.", "Turn on microphone.", "Delete microphone.", "Hide microphone."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "الوظيفة التقنية التي تنهي وجود المعلم في الاجتماع دون إغلاقه للبقية تظهر باسم:", options: ["Disconnect.", "Stop stream.", "Withdraw.", "Leave call."], answer: 3 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "تظهر أهمية مهارة تسجيل الخروج (Log out) بوضوح عند التعامل مع:", options: ["الأجهزة العامة والمشتركة.", "الأجهزة الشخصية والخاصة.", "شبكات الإنترنت المنزلية.", "الطابعات الرقمية السلكية."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "لإضافة ملاحظات خاصة بمقدم العرض تظهر أثناء التشغيل يتم اختيار الأمر:", options: ["screen.", "Notes.", "record.", "Style."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يتم تحديد الصفوف الدراسية المستهدفة للمحتوى التعليمي من خلال قائمة:", options: ["Edit.", "Move.", "For.", "Due."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "عند رغبة المعلم في العودة السريعة للقاء بعد حدوث انقطاع فني مفاجئ، يختار أمر:", options: ["Rejoin.", "Leave.", "Effect.", "Sharing."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يكتمل مسار الخروج الناجح من ChatGPT بعودة المتصفح تلقائياً إلى واجهة:", options: ["قائمة الإعدادات العامة.", "شاشة المحادثة الجديدة.", "صفحة الدخول الرئيسية.", "صفحة البحث في جوجل."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "عند البحث عن عناصر جاهزة داخل Canva، يتم استخدام:", options: ["Transition.", "Elements.", "Animate.", "Education."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "لضمان تفعيل أمر \"تكليف\" وإرسال المهمة للطلاب، يجب تعبئة مساحة:", options: ["Title.", "Details.", "Subject.", "Index."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "أي من الأوامر التالية يُستخدم لضمان عدم بقاء الحساب مفتوحاً بشكل تلقائي:", options: ["Log out.", "Channel close.", "Stop chat.", "Block access."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يتم إدراج مربع نص جديد داخل الشريحة من خلال قائمة:", options: ["File.", "Share.", "Text.", "Edge."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يستطيع المعلم من خلال خانه For داخل منصة Google Classroom القيام بـما يلي:", options: ["تحديد الصف المستهدف.", "رصد الدرجة للتكليف.", "تحديد وقت تسليم الواجب.", "كتابة تعليمات التكليف."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يُستخدم سؤال الإجابة القصيرة في المواقف التي تتطلب من المتعلم:", options: ["تحديد أكثر من إجابة صحيحة.", "تقديم استجابة نصية موجزة.", "ترتيب عناصر وفق أولوية.", "اختيار بديل واحد من قائمة."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يتم تحديد اتجاه حركة العنصر في قائمة Animate من خلال الأمر:", options: ["Direction.", "Elements.", "Presenter.", "Duplicate."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "يتم تحديد \"الموعد والوقت النهائي\" لتسليم التكليف عبر الأمر:", options: ["Title.", "Due.", "Topic.", "Post."], answer: 1 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "عند الرغبة في إضافة حركات بصرية انسيابية تظهر عند التبديل بين الصفحات، نختار:", options: ["إضافة انتقالات بين الشرائح.", "إضافة حركات داخل العناصر.", "إضافة تأثيرات داخل الصور.", "إضافة تنسيقات داخل النصوص."], answer: 0 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "في حال أراد المتعلم إضافة حركة انتقالية بين شريحتين متتاليتين، فإنه يستخدم:", options: ["Transition.", "Elements.", "Duplicate.", "Animate."], answer: 3 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "تسمح الصلاحية Can edit للمشارك في العرض التقديمي:", options: ["بالمشاهدة.", "بالتنزيل.", "بالتعديل.", "بالتعليق."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "لتصدير مشروعك التعليمي كملف PowerPoint يدعم عمليات التعديل والحذف اللاحقة، نختار:", options: ["PNG.", "PDF.", "PPTX.", "MP4."], answer: 2 },
+            { part: "أسئلة الاختيار من متعدد", type: "mcq", text: "عند اختيار PPTX من قائمة File type فإن ذلك يسمح بـ:", options: ["تنزيل العرض كصور.", "حفظ العرض كفيديو.", "طباعة العرض.", "تصدير العرض كملف."], answer: 3 }
+        ];
+
+        let currentQIndex = 0; let score = 0; let selectedOption = -1; let startTime;
+
+        function startTest() {
+            startTime = new Date();
+            document.getElementById("view-instructions").classList.remove("active");
+            document.getElementById("view-question").classList.add("active");
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            selectedOption = -1;
+            document.getElementById("nextBtn").classList.remove("active");
+            let q = questions[currentQIndex];
+            document.getElementById("qPart").innerText = q.part;
+            document.getElementById("qCounter").innerText = `السؤال ${currentQIndex + 1} من ${questions.length}`;
+            document.getElementById("qText").innerText = q.text;
+            document.getElementById("progressFill").style.width = ((currentQIndex) / questions.length) * 100 + "%";
+
+            let grid = document.getElementById("optionsGrid");
+            grid.innerHTML = "";
+            grid.style.gridTemplateColumns = "1fr";
+
+            q.options.forEach((opt, index) => {
+                let btn = document.createElement("button");
+                btn.className = "option-btn"; btn.innerText = opt;
+                btn.onclick = () => selectOption(index, btn);
+                grid.appendChild(btn);
+            });
+
+            if(currentQIndex === questions.length - 1) document.getElementById("nextBtn").innerText = "إنهاء الاختبار ✔";
+        }
+
+        function selectOption(index, btn) {
+            selectedOption = index;
+            document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+            btn.classList.add("selected");
+            document.getElementById("nextBtn").classList.add("active");
+        }
+
+        function submitAnswer() {
+            if (selectedOption === -1) return;
+            if (selectedOption === questions[currentQIndex].answer) score++;
+            currentQIndex++;
+            if (currentQIndex < questions.length) loadQuestion();
+            else finishTest();
+        }
+
+        function finishTest() {
+            let timeDiff = Math.floor((new Date() - startTime) / 1000);
+            let mins = Math.floor(timeDiff / 60); let secs = timeDiff % 60;
+            let timeString = `${mins}:${secs < 10 ? '0' : ''}${secs} دقائق`;
+
+            let correctAns = score; let wrongAns = questions.length - score;
+            let perc = (score / questions.length) * 100;
+
+            document.getElementById("resCorrect").innerText = correctAns;
+            document.getElementById("resWrong").innerText = wrongAns;
+            document.getElementById("resPerc").innerText = Math.round(perc) + "%";
+            document.getElementById("resTime").innerText = timeString;
+
+            setTimeout(() => {
+                document.getElementById("barCorrect").style.height = perc + "%";
+                document.getElementById("barCorrect").innerText = Math.round(perc) + "%";
+                document.getElementById("barWrong").style.height = (100 - perc) + "%";
+                document.getElementById("barWrong").innerText = Math.round(100 - perc) + "%";
+            }, 300);
+
+            // حفظ النتيجة التفصيلية في المتصفح
+            localStorage.setItem(currentUser + "_preTestDone", "true");
+            localStorage.setItem(currentUser + "_preTestScore", Math.round(perc));
+            localStorage.setItem(currentUser + "_preTestCorrect", correctAns);
+            localStorage.setItem(currentUser + "_preTestWrong", wrongAns);
+
+            document.getElementById("view-question").classList.remove("active");
+            document.getElementById("view-result").classList.add("active");
+            document.getElementById("progressFill").style.width = "100%";
+        }
+
+        function goToSurvey() { window.location.href = "survey.html"; }
+    </script>
+</body>
+</html>
+
